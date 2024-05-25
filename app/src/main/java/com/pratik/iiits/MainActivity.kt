@@ -26,6 +26,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         hook()
 
+
         val ref:  DatabaseReference = database.getReference().child("users").child(auth.uid.toString())
         ref.addValueEventListener(object : ValueEventListener{
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -44,6 +45,14 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    fun events(view: View) {
+        startActivity(Intent(this@MainActivity,EventsActivity::class.java))
+    }
+
+    fun openMaps(view: View) {
+        startActivity(Intent(this@MainActivity,MapsActivity::class.java))
+    }
+
     fun openCalender(view: View) {
         startActivity(Intent(this@MainActivity,Calender::class.java))
 
@@ -52,6 +61,8 @@ class MainActivity : AppCompatActivity() {
     fun opennotesactivity(view: View) {
         startActivity(Intent(this@MainActivity,NotesActivity::class.java))
     }
+
+
 
     fun openchats(view: View) {
         startActivity(Intent(this@MainActivity, ChatAppHome::class.java))

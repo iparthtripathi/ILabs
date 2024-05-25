@@ -28,4 +28,10 @@
     <color name="text_color_light">#A3A3A3</color>
     <color name="blue">#0070DA</color>
     <color name="grey">#707070</color>
+    <color name="teal">#4297A0</color>
+    <color name="ivory">#F4EAE6</color>
+    <color name="coral">#E57F84</color>
+    <color name="misty">#2F5061</color>
+    <color name="honey">#C44B4F</color>
+
 </resources>

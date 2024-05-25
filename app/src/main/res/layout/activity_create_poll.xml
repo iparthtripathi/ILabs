@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="16dp"
+    android:background="@color/white">
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/pollQuestionLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/black"
+        android:layout_marginBottom="16dp"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/pollQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:background="@drawable/edittext_rounded_corners"
+            android:hint="Enter your question"
+
+            android:textColorHint="@color/black"
+            android:padding="10dp"/>
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:id="@+id/optionsContainer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_below="@id/pollQuestionLayout"
+        android:layout_marginBottom="16dp"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/addOptionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Option"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        android:layout_below="@id/optionsContainer"
+        android:layout_marginBottom="16dp"
+        android:onClick="addOption"/>
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/createPollBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Create Poll"
+        android:textColor="@color/white"
+        style="@style/Widget.MaterialComponents.Button"
+        android:layout_below="@id/addOptionButton"
+        android:layout_centerHorizontal="true"
+        android:padding="16dp"
+        android:onClick="submitPoll"/>
+</RelativeLayout>

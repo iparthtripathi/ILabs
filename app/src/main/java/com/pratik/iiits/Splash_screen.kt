@@ -22,7 +22,8 @@ class Splash_screen : AppCompatActivity() {
             else {
                 //Toast.makeText(this@Splash_screen,auth.currentUser.toString(),Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this@Splash_screen, MainActivity::class.java))
+                finish()
             }
-        }, 6000)
+        }, 3000)
     }
 }

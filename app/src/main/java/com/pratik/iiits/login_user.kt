@@ -13,6 +13,7 @@ import android.util.Log
 import android.view.MotionEvent
 import android.view.View
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -24,6 +25,9 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException
+import com.google.firebase.auth.FirebaseAuthInvalidUserException
+import com.google.firebase.auth.FirebaseAuthUserCollisionException
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.GoogleAuthProvider
 import com.google.firebase.auth.SignInMethodQueryResult
@@ -37,28 +41,29 @@ import com.pratik.iiits.Models.UserModel
 
 class login_user : AppCompatActivity() {
 
-
-    var validmail = false
-    var emailPattern = Regex("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")
-    lateinit var passwordbox:EditText
-    lateinit var emailbox :EditText
+    private var validmail = false
+    private val emailPattern = Regex("[a-zA-Z0-9._-]+@[a-z]+\\.+[a-z]+")
+    private lateinit var passwordbox: EditText
+    private lateinit var emailbox: EditText
     private lateinit var auth: FirebaseAuth
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var loadingProgressBar: ProgressBar
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login_user)
 
-        emailbox = findViewById<EditText>(R.id.emailbox)
-        passwordbox = findViewById<EditText>(R.id.passwordbox)
+        emailbox = findViewById(R.id.emailbox)
+        passwordbox = findViewById(R.id.passwordbox)
+        loadingProgressBar = findViewById(R.id.loadingProgressBar)
         configureright()
         emailbox.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun onTextChanged(charSequence: CharSequence, i: Int, i1: Int, i2: Int) {}
             override fun afterTextChanged(editable: Editable) {
                 validmail = emailPattern.matches(emailbox.text.toString().trim())
-                Log.i("check",validmail.toString())
+                Log.i("check", validmail.toString())
                 checkvalidmail()
-
             }
         })
         auth = FirebaseAuth.getInstance()
@@ -68,107 +73,108 @@ class login_user : AppCompatActivity() {
             .requestEmail()
             .build()
 
-        googleSignInClient = GoogleSignIn.getClient(this,gso)
-
-
-
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
     }
-
 
     fun signin(view: View) {
         val signInIntent = googleSignInClient.signInIntent
         launcher.launch(signInIntent)
     }
 
-    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
-            result->
-        if(result.resultCode== Activity.RESULT_OK){
+    private val launcher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
             val task = GoogleSignIn.getSignedInAccountFromIntent(result.data)
             handleresults(task)
         }
     }
 
     private fun handleresults(task: Task<GoogleSignInAccount>) {
-        if (task.isSuccessful){
+        if (task.isSuccessful) {
             val account: GoogleSignInAccount? = task.result
-            if (account!=null){
+            if (account != null) {
                 updateUi(account)
+            } else {
+                Toast.makeText(this, "Google Sign-In account is null", Toast.LENGTH_SHORT).show()
             }
-        }
-        else{
-            Toast.makeText(this,task.exception.toString(), Toast.LENGTH_SHORT).show()
+        } else {
+            Toast.makeText(this, "Google Sign-In failed: ${task.exception}", Toast.LENGTH_SHORT).show()
         }
     }
 
     private fun updateUi(account: GoogleSignInAccount) {
-        val credential = GoogleAuthProvider.getCredential(account.idToken,null)
+        val credential = GoogleAuthProvider.getCredential(account.idToken, null)
         auth.fetchSignInMethodsForEmail(account.email.toString())
-            .addOnCompleteListener(OnCompleteListener<SignInMethodQueryResult> { task ->
-                Log.i("user2",FirebaseAuth.getInstance().uid.toString())
-                Log.i("user",task.result.signInMethods.toString())
-                val isNewUser = FirebaseAuth.getInstance().uid!!.isNullOrBlank()
+            .addOnCompleteListener { task ->
+                Log.i("user2", FirebaseAuth.getInstance().uid.toString())
+                Log.i("user", task.result.signInMethods.toString())
+                val isNewUser = FirebaseAuth.getInstance().uid.isNullOrBlank()
                 if (isNewUser) {
-                    Toast.makeText(this,"Account Doesn't Exists! Please Register.", Toast.LENGTH_SHORT).show()
-                }
-                else {
+                    Toast.makeText(this, "Account Doesn't Exist! Please Register.", Toast.LENGTH_SHORT).show()
+                } else {
                     auth.signInWithCredential(credential).addOnCompleteListener {
-                        if(it.isSuccessful){
-                            login(account,null)
-
-                        }
-                        else{
-                            Toast.makeText(this,""+it.exception.toString(), Toast.LENGTH_SHORT).show()
+                        if (it.isSuccessful) {
+                            login(account, null)
+                        } else {
+                            Toast.makeText(this, "${it.exception}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
-            })
-
+            }
     }
 
-
     fun login_with_email(view: View) {
+        // Hide the sign-in button
+        view.visibility = View.GONE
+
+        // Show loading bar
+        loadingProgressBar.visibility = View.VISIBLE
+
         val mail = emailbox.text.toString()
         val pass = passwordbox.text.toString()
-        if (mail.isNotEmpty() && pass.isNotEmpty() && validmail){
-            auth.fetchSignInMethodsForEmail(mail)
-                .addOnCompleteListener(OnCompleteListener<SignInMethodQueryResult> { task ->
-                    Log.i("user",task.result.signInMethods.toString())
-                    val isNewUser = FirebaseAuth.getInstance().uid!!.isNullOrBlank()
-                    if (isNewUser) {
-                        Log.i("user",task.result.signInMethods.toString())
-                        Toast.makeText(this,"Account Doesn't Exists! Please Register.", Toast.LENGTH_SHORT).show()
-                    }
-                    else {
-                        auth.signInWithEmailAndPassword(mail, pass)
-                            .addOnCompleteListener(this) { task ->
-                                if (task.isSuccessful) {
-                                    // Sign in success, update UI with the signed-in user's information
-                                    Log.d(TAG, "signInWithEmail:success")
-                                    val user = auth.currentUser
-                                    login(null,user)
-                                } else {
-                                    // If sign in fails, display a message to the user.
-                                    Log.w(TAG, "signInWithEmail:failure", task.exception)
-                                    Toast.makeText(baseContext, "Authentication failed.",
-                                        Toast.LENGTH_SHORT).show()
-                                    //updateUI(null)
-                                }
-                            }
-                    }
-                })
-        }
-        else {
-            Log.i("user","HI")
-            Toast.makeText(this,"Please enter all credentials properly!",Toast.LENGTH_SHORT).show()
-        }
+        if (mail.isNotEmpty() && pass.isNotEmpty() && validmail) {
+            auth.signInWithEmailAndPassword(mail, pass)
+                .addOnCompleteListener(this) { task ->
+                    // Hide loading bar
+                    loadingProgressBar.visibility = View.INVISIBLE
 
+                    if (task.isSuccessful) {
+                        val user = auth.currentUser
+                        login(null, user)
+                    } else {
+                        // Handle sign-in failure
+                        when (task.exception) {
+                            // Handle specific exceptions
+                            is FirebaseAuthInvalidUserException -> {
+                                Toast.makeText(baseContext, "User does not exist.", Toast.LENGTH_SHORT).show()
+                            }
+                            is FirebaseAuthInvalidCredentialsException -> {
+                                Toast.makeText(baseContext, "Invalid email or password.", Toast.LENGTH_SHORT).show()
+                            }
+                            is FirebaseAuthUserCollisionException -> {
+                                Toast.makeText(baseContext, "Email is already in use.", Toast.LENGTH_SHORT).show()
+                            }
+                            else -> {
+                                Toast.makeText(baseContext, "Authentication failed.", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                        // Show the sign-in button again
+                        view.visibility = View.VISIBLE
+                    }
+                }
+        } else {
+            Toast.makeText(this, "Please enter all credentials properly!", Toast.LENGTH_SHORT).show()
+            // Hide loading bar
+            loadingProgressBar.visibility = View.INVISIBLE
+            // Show the sign-in button again
+            view.visibility = View.VISIBLE
+        }
     }
 
 
     private fun login(account: GoogleSignInAccount?, user: FirebaseUser?) {
         startActivity(Intent(this@login_user, MainActivity::class.java))
-
     }
+
 
 
     fun configureright(){

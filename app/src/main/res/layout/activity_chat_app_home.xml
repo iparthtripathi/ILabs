@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:background="@color/darktheme_back"
     tools:context=".chatapp.ChatAppHome">
-    <LinearLayout
+    <androidx.appcompat.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="@dimen/_40sdp"
         android:id="@+id/toolbar"
@@ -26,12 +26,13 @@
         <ImageView
             android:layout_width="@dimen/_20sdp"
             android:layout_height="@dimen/_20sdp"
-            android:onClick="logout"
-            android:visibility="gone"
-            android:background="@drawable/off"
             android:layout_gravity="center"
-            android:layout_marginRight="@dimen/_10sdp"/>
-    </LinearLayout>
+            android:layout_marginRight="@dimen/_15sdp"
+            android:background="@drawable/off"
+            android:onClick="logout"
+            android:visibility="gone"/>
+
+    </androidx.appcompat.widget.Toolbar>
     <androidx.recyclerview.widget.RecyclerView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

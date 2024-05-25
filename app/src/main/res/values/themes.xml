@@ -28,6 +28,7 @@
         <item name="windowMinWidthMajor">80%</item>
         <item name="windowActionBar">false</item>
     </style>
+
     <style name="Pickertheme" parent="Theme.AppCompat.Light.Dialog">
         <item name="colorAccent">@color/blue</item>
         <item name="android:layout_width">wrap_content</item>

@@ -1,12 +1,16 @@
 package com.pratik.iiits
 
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.text.Html
+import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -16,7 +20,12 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.Query
+import com.pratik.iiits.Models.Post
+import com.pratik.iiits.Models.UserModel
 import com.pratik.iiits.chatapp.ChatScreen
+import com.pratik.iiits.notes.Adapters.PostsAdapter
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
@@ -34,11 +43,16 @@ class ProfilePage : AppCompatActivity() {
     lateinit var btn1:ImageButton
     lateinit var uri:String
     private lateinit var googleSignInClient: GoogleSignInClient
+    private lateinit var firestoreDb: FirebaseFirestore
+    private lateinit var posts :MutableList<Post>
+    private lateinit var adapter: PostsAdapter
+    private var user1: UserModel? = null
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_page)
+
 
         hook()
 
@@ -83,6 +97,40 @@ class ProfilePage : AppCompatActivity() {
             }
 
         })
+
+        posts= mutableListOf()
+
+        adapter= PostsAdapter(this,posts)
+        val rvPosts=findViewById<RecyclerView>(R.id.rvPosts)
+
+        rvPosts.adapter= adapter
+        rvPosts.layoutManager= LinearLayoutManager(this)
+        firestoreDb= FirebaseFirestore.getInstance()
+
+        firestoreDb.collection("users")
+            .document(FirebaseAuth.getInstance().currentUser?.uid as String)
+            .get()
+            .addOnSuccessListener { userSnapshot ->
+                user1 = userSnapshot.toObject(UserModel::class.java)
+                Log.d(ContentValues.TAG, username.text.toString())
+            }
+
+        val postsReference=firestoreDb.collection("posts").orderBy("creation_time_ms", Query.Direction.DESCENDING).whereEqualTo("user.username",
+            username.text.toString()
+        )
+        postsReference.addSnapshotListener { snapshot, e ->
+            if (e != null || snapshot == null) {
+                Log.w(ContentValues.TAG, "Listen failed.", e)
+                return@addSnapshotListener
+            }
+            val postList=snapshot.toObjects(Post::class.java)
+            posts.clear()
+            posts.addAll(postList)
+            adapter.notifyDataSetChanged()
+            for (post in postList) {
+                Log.d(ContentValues.TAG, "Post: $post")
+            }
+        }
     }
 
     fun logout(view: View) {
