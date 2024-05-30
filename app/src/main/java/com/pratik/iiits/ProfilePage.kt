@@ -147,8 +147,8 @@ class ProfilePage : AppCompatActivity() {
             // Sign out from Google Sign-In (if applicable)
             googleSignInClient.signOut().addOnCompleteListener(this) {
                 // Redirect the user to the login screen or perform any other necessary actions
-                startActivity(Intent(this@ProfilePage, login_user::class.java))
-                finish() // Close the current activity to prevent the user from returning to it using the back button
+                startActivity(Intent(this@ProfilePage, welcome::class.java))
+                finishAffinity() // Close the current activity to prevent the user from returning to it using the back button
             }
             dailog.dismiss()
         }

@@ -29,11 +29,13 @@ class CreatePoll : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_create_poll)
 
+        // Initialize views
         submitButton = findViewById(R.id.createPollBtn)
         pollQuestion = findViewById(R.id.pollQuestion)
         optionsContainer = findViewById(R.id.optionsContainer)
         firestoreDb = FirebaseFirestore.getInstance()
 
+        // Fetch current user information from Firestore
         firestoreDb.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid as String)
             .get()
@@ -52,38 +54,30 @@ class CreatePoll : AppCompatActivity() {
     }
 
     private fun addOptionField() {
-        val textInputLayout = TextInputLayout(this)
-        textInputLayout.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        ).apply {
-            setMargins(0, 0, 0, 16)
+        val textInputLayout = TextInputLayout(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            ).apply {
+                setMargins(0, 0, 0, 16)
+            }
+            defaultHintTextColor = ColorStateList.valueOf(ContextCompat.getColor(this@CreatePoll, android.R.color.black))
+            hint = "Option ${optionsContainer.childCount + 1}"
+            setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE)
         }
 
-        // Set hint text color to black
-        textInputLayout.defaultHintTextColor = ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.black))
-
-        textInputLayout.hint = "Option ${optionsContainer.childCount + 1}"
-        textInputLayout.setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE)
-
-        val textInputEditText = TextInputEditText(this)
-        textInputEditText.layoutParams = LinearLayout.LayoutParams(
-            LinearLayout.LayoutParams.MATCH_PARENT,
-            LinearLayout.LayoutParams.WRAP_CONTENT
-        )
-
-        // Set text color to black
-        textInputEditText.setTextColor(ContextCompat.getColor(this, android.R.color.black))
-
-        // Set background tint to black
-        textInputEditText.backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this, android.R.color.black))
+        val textInputEditText = TextInputEditText(this).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+            )
+            setTextColor(ContextCompat.getColor(this@CreatePoll, android.R.color.black))
+            backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@CreatePoll, android.R.color.black))
+        }
 
         textInputLayout.addView(textInputEditText)
         optionsContainer.addView(textInputLayout)
     }
-
-
-
 
     fun submitPoll(view: View) {
         submitButton.isEnabled = false
@@ -128,10 +122,11 @@ class CreatePoll : AppCompatActivity() {
                 submitButton.isEnabled = true
                 if (!pollCreationTask.isSuccessful) {
                     Log.e("Exception", "Failed to save poll", pollCreationTask.exception)
+                    Toast.makeText(this, "Failed to save poll", Toast.LENGTH_SHORT).show()
                 } else {
                     val eventsIntent = Intent(this, EventsActivity::class.java)
                     startActivity(eventsIntent)
-                    finish()
+                    finishAffinity()
                 }
             }
     }

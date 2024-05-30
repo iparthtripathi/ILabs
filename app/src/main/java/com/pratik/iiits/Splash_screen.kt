@@ -18,7 +18,10 @@ class Splash_screen : AppCompatActivity() {
         h = Handler()
         h!!.postDelayed({
             val auth = FirebaseAuth.getInstance()
-            if (auth.currentUser == null) startActivity(Intent(this@Splash_screen, login_user::class.java))
+            if (auth.currentUser == null) {
+                startActivity(Intent(this@Splash_screen, welcome::class.java))
+                finish()
+            }
             else {
                 //Toast.makeText(this@Splash_screen,auth.currentUser.toString(),Toast.LENGTH_SHORT).show()
                 startActivity(Intent(this@Splash_screen, MainActivity::class.java))

@@ -23,12 +23,12 @@ class PollAdapter(private val context: Context, private val polls: List<Poll>) :
 
     inner class ViewHolder(private val binding: ItemPollBinding) : RecyclerView.ViewHolder(binding.root) {
         fun bind(poll: Poll) {
-            binding.pollQuestion.text = poll.question
-            binding.optionsContainer.removeAllViews()
+            binding.tvPollQuestion.text= poll.question
+            binding.llPollOptions.removeAllViews()
             poll.options.forEach { option ->
                 val optionTextView = TextView(context)
                 optionTextView.text = option
-                binding.optionsContainer.addView(optionTextView)
+                binding.llPollOptions.addView(optionTextView)
             }
         }
     }

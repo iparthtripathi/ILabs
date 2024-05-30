@@ -66,6 +66,7 @@ class Register : AppCompatActivity() {
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         val autoCompleteTextView: AutoCompleteTextView = findViewById(R.id.post_selector)
+        autoCompleteTextView.requestFocus()
         arrayAdapter = ArrayAdapter<String>(this, R.layout.list_item, postlist)
         autoCompleteTextView.setAdapter<ArrayAdapter<String>>(arrayAdapter)
         autoCompleteTextView.onItemClickListener =
