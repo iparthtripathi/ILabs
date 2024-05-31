@@ -134,6 +134,174 @@
                 android:layout_width="match_parent"
                 android:layout_height="15dp"/>
 
+<!--            <EditText-->
+<!--                android:id="@+id/phonebox"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:hint="Enter phone number"-->
+<!--                android:background="@drawable/edittext_rounded_corners"-->
+<!--                android:inputType="phone" />-->
+
+<!--            <EditText-->
+<!--                android:id="@+id/otpbox"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:background="@drawable/edittext_rounded_corners"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:hint="Enter OTP"-->
+<!--                android:inputType="number" />-->
+
+<!--            <Button-->
+<!--                android:id="@+id/sendOtpButton"-->
+<!--                android:layout_width="match_parent"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:text="Send OTP" />-->
+
+
+
+
+
+
+<!--            new -->
+
+
+
+
+            <androidx.cardview.widget.CardView
+                android:layout_width="match_parent"
+                android:layout_height="85dp"
+                android:layout_margin="1dp"
+                android:elevation="@dimen/_5sdp"
+                app:cardBackgroundColor="@color/white"
+                app:cardCornerRadius="30dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:padding="5dp">
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:orientation="vertical"
+                        android:padding="10dp">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="7dp"
+                            android:text="Enter your phone number"
+                            android:textColor="@color/black"
+                            app:ccp_customMasterCountries="AD,BT,CL,HT,US,GB,OM,NZ" />
+
+                        <LinearLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            android:orientation="horizontal">
+
+                            <com.hbb20.CountryCodePicker
+                                android:id="@+id/ccp"
+                                android:layout_width="wrap_content"
+                                android:layout_height="50dp"
+                                android:layout_marginTop="10dp"
+                                app:ccpDialog_background="@color/white"
+                                app:ccpDialog_keyboardAutoPopup="false"
+                                app:ccpDialog_textColor="@color/black"
+                                app:ccp_autoDetectCountry="true"
+                                app:ccp_autoDetectLanguage="true"
+                                app:ccp_contentColor="@color/black"
+                                app:ccp_showNameCode="false"
+                                app:ccp_textSize="15dp" />
+
+                            <EditText
+                                android:id="@+id/phonebox"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_gravity="center_vertical"
+                                android:layout_marginTop="2dp"
+                                android:background="@null"
+                                android:cursorVisible="false"
+                                android:hint="XXXXXXXXXX"
+                                android:inputType="number"
+                                android:textColor="@color/black"
+                                android:textColorHint="@color/black"
+                                android:textSize="16sp" />
+                        </LinearLayout>
+                    </LinearLayout>
+
+                    <Button
+                        android:id="@+id/sendOtpButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginEnd="@dimen/_5sdp"
+                        android:layout_marginBottom="6dp"
+                        android:backgroundTint="@color/misty"
+                        android:elevation="4dp"
+                        android:paddingStart="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingEnd="20dp"
+                        android:paddingBottom="10dp"
+                        android:text="Send OTP"
+                        android:textColor="#FFFFFF"
+                        android:textStyle="bold" />
+
+                    <Button
+                        android:id="@+id/verifyOtpButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Verify OTP"
+                        android:textColor="#FFFFFF"
+                        android:visibility="gone"
+                        android:textStyle="bold"
+                        android:backgroundTint="@color/honey"
+                        android:elevation="4dp"
+                        android:paddingStart="20dp"
+                        android:paddingEnd="20dp"
+                        android:paddingTop="10dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginTop="6dp"
+                        android:layout_marginBottom="6dp"
+                        android:layout_gravity="center" />
+
+                </LinearLayout>
+            </androidx.cardview.widget.CardView>
+
+
+            <EditText
+                android:id="@+id/otpbox"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:background="@drawable/edittext_rounded_corners"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Enter OTP"
+                android:inputType="textPassword"
+                android:visibility="gone"
+                android:paddingStart="10dp"
+                android:textSize="11sp"
+                android:textColor="@android:color/black"
+                android:textColorHint="@android:color/darker_gray"
+                android:textStyle="bold"
+                tools:ignore="TouchTargetSizeCheck" />
+
+
+
+<!--            end-->
+
+            <!-- Loading ProgressBar -->
+            <ProgressBar
+                android:id="@+id/loadingProgressBar1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_gravity="center" />
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
