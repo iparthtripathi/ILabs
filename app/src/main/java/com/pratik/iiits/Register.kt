@@ -3,6 +3,7 @@ package com.pratik.iiits
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.ContentValues.TAG
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.InputType
@@ -128,6 +129,8 @@ class Register : AppCompatActivity() {
     }
 
     fun open_login(view: View?) {
+        val intent = Intent(this, otpVerify::class.java)
+        startActivity(intent)
         finish()
     }
 

@@ -107,4 +107,6 @@ dependencies {
 
 
     implementation 'com.hbb20:ccp:2.6.1'
+
+    implementation 'com.github.blackfizz:eazegraph:1.2.2@aar'
 }

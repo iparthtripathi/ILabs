@@ -188,7 +188,7 @@ class login_user : AppCompatActivity() {
 
         val mail = emailbox.text.toString()
         val pass = passwordbox.text.toString()
-        if(flag==1){
+        if(true){
             view.visibility = View.GONE
             if (mail.isNotEmpty() && pass.isNotEmpty() && validmail) {
                 auth.signInWithEmailAndPassword(mail, pass)

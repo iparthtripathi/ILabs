@@ -8,9 +8,11 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.LinearLayout
+import android.widget.RadioButton
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.widget.addTextChangedListener
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -21,7 +23,7 @@ import com.pratik.iiits.Models.UserModel
 class CreatePoll : AppCompatActivity() {
     private lateinit var pollQuestion: TextInputEditText
     private lateinit var optionsContainer: LinearLayout
-    private var user1: UserModel? = null
+    private var currentUser: UserModel? = null
     private lateinit var firestoreDb: FirebaseFirestore
     private lateinit var submitButton: Button
 
@@ -40,8 +42,8 @@ class CreatePoll : AppCompatActivity() {
             .document(FirebaseAuth.getInstance().currentUser?.uid as String)
             .get()
             .addOnSuccessListener { userSnapshot ->
-                user1 = userSnapshot.toObject(UserModel::class.java)
-                Log.d(ContentValues.TAG, "Username: $user1")
+                currentUser = userSnapshot.toObject(UserModel::class.java)
+                Log.d(ContentValues.TAG, "Username: $currentUser")
             }
 
         // Add initial option fields
@@ -54,6 +56,16 @@ class CreatePoll : AppCompatActivity() {
     }
 
     private fun addOptionField() {
+        val radioButton = RadioButton(this)
+        radioButton.layoutParams = LinearLayout.LayoutParams(
+            LinearLayout.LayoutParams.MATCH_PARENT,
+            LinearLayout.LayoutParams.WRAP_CONTENT
+        ).apply {
+            setMargins(0, 0, 0, 16)
+        }
+        radioButton.text = "Option ${optionsContainer.childCount / 2 + 1}"
+        radioButton.setTextColor(ContextCompat.getColor(this, android.R.color.black))
+
         val textInputLayout = TextInputLayout(this).apply {
             layoutParams = LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -62,7 +74,7 @@ class CreatePoll : AppCompatActivity() {
                 setMargins(0, 0, 0, 16)
             }
             defaultHintTextColor = ColorStateList.valueOf(ContextCompat.getColor(this@CreatePoll, android.R.color.black))
-            hint = "Option ${optionsContainer.childCount + 1}"
+            hint = "Option ${optionsContainer.childCount / 2 + 1}"
             setBoxBackgroundMode(TextInputLayout.BOX_BACKGROUND_OUTLINE)
         }
 
@@ -75,7 +87,12 @@ class CreatePoll : AppCompatActivity() {
             backgroundTintList = ColorStateList.valueOf(ContextCompat.getColor(this@CreatePoll, android.R.color.black))
         }
 
+        textInputEditText.addTextChangedListener { text ->
+            radioButton.text = text
+        }
+
         textInputLayout.addView(textInputEditText)
+        optionsContainer.addView(radioButton)
         optionsContainer.addView(textInputLayout)
     }
 
@@ -90,11 +107,15 @@ class CreatePoll : AppCompatActivity() {
         }
 
         val options = mutableListOf<String>()
-        for (i in 0 until optionsContainer.childCount) {
-            val textInputLayout = optionsContainer.getChildAt(i) as TextInputLayout
+        val voteCounts = mutableListOf<Int>()
+        val voters = mutableMapOf<String, Int>()
+
+        for (i in 0 until optionsContainer.childCount step 2) {
+            val textInputLayout = optionsContainer.getChildAt(i + 1) as TextInputLayout
             val optionText = textInputLayout.editText?.text.toString()
             if (optionText.isNotEmpty()) {
                 options.add(optionText)
+                voteCounts.add(0) // Initialize vote count to 0 for each option
             }
         }
 
@@ -104,7 +125,7 @@ class CreatePoll : AppCompatActivity() {
             return
         }
 
-        if (user1 == null) {
+        if (currentUser == null) {
             Toast.makeText(this, "User not found", Toast.LENGTH_SHORT).show()
             submitButton.isEnabled = true
             return
@@ -113,8 +134,10 @@ class CreatePoll : AppCompatActivity() {
         val poll = Poll(
             question,
             options,
+            voteCounts,
+            voters,
             System.currentTimeMillis(),
-            user1
+            currentUser
         )
 
         firestoreDb.collection("polls").add(poll)
