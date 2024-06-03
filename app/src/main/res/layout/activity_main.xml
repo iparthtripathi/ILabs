@@ -288,7 +288,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_15sdp"
                 android:orientation="horizontal">
 
                 <androidx.cardview.widget.CardView
@@ -296,7 +295,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_130sdp"
                     android:onClick="events"
-                    android:layout_weight="1"
+                    android:layout_weight="0.6"
                     android:layout_marginEnd="@dimen/_10sdp"
                     app:cardBackgroundColor="@color/honey"
                     app:cardCornerRadius="@dimen/_10sdp"
@@ -351,6 +350,90 @@
                         android:layout_marginBottom="-20dp"
                         android:alpha="0.8"
                         android:src="@drawable/maps" />
+
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+
+
+
+
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/_15sdp"
+            android:layout_marginRight="@dimen/_15sdp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_15sdp"
+                android:orientation="horizontal">
+
+                <androidx.cardview.widget.CardView
+                    android:id="@+id/groups"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_130sdp"
+                    android:onClick="openGroups"
+                    android:layout_weight="1"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:alpha="0.9"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Clubs"
+                        android:onClick="openGroups"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.8"
+                        android:src="@drawable/img5" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_130sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:onClick="openMarket"
+                    android:layout_weight="0.75"
+                    app:cardBackgroundColor="@color/misty"
+                    app:cardCornerRadius="@dimen/_10sdp"
+                    app:cardElevation="@dimen/_5sdp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:alpha="0.9"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Marketplace"
+                        android:textColor="@color/white"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.8"
+                        android:src="@drawable/img4" />
 
                 </androidx.cardview.widget.CardView>
             </LinearLayout>

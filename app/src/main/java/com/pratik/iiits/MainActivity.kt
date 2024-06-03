@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.pratik.iiits.Marketplace.HomeActivity
 import com.pratik.iiits.R
 import com.pratik.iiits.chatapp.ChatAppHome
 import com.pratik.iiits.chatapp.Splash_chatapp
@@ -70,6 +71,10 @@ class MainActivity : AppCompatActivity() {
     fun openchats(view: View) {
         startActivity(Intent(this@MainActivity, ChatAppHome::class.java))
 
+    }
+
+    fun openMarket(view: View) {
+        startActivity(Intent(this@MainActivity, HomeActivity::class.java))
     }
 
     private fun hook() {
