@@ -57,6 +57,9 @@ class MainActivity : AppCompatActivity() {
         startActivity(Intent(this@MainActivity,Calender::class.java))
 
     }
+    fun openGroups(view: View) {
+        startActivity(Intent(this@MainActivity,GroupsActivity::class.java))
+    }
 
     fun opennotesactivity(view: View) {
         startActivity(Intent(this@MainActivity,NotesActivity::class.java))
