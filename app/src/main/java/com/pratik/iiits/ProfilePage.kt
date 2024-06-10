@@ -29,6 +29,7 @@ import com.pratik.iiits.notes.Adapters.PostsAdapter
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
+
 class ProfilePage : AppCompatActivity() {
 
     lateinit var auth: FirebaseAuth

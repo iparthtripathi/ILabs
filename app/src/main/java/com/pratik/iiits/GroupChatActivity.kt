@@ -1,6 +1,7 @@
 package com.pratik.iiits
 
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.firebase.auth.FirebaseAuth
@@ -37,14 +38,14 @@ class GroupChatActivity : AppCompatActivity() {
         binding.recyclerView.layoutManager = LinearLayoutManager(this)
         binding.recyclerView.adapter = adapter
 
-        binding.sendButton.setOnClickListener {
-            sendMessage()
-        }
+//        binding.sendButton.setOnClickListener {
+//            sendMessage()
+//        }
 
         fetchMessages()
     }
 
-    private fun sendMessage() {
+    fun sendMessage(view: View) {
         val messageText = binding.messageInput.text.toString()
         if (messageText.isNotEmpty()) {
             val message = MessageModel(messageText, auth.uid ?: "", System.currentTimeMillis())

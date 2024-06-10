@@ -109,4 +109,9 @@ dependencies {
     implementation 'com.hbb20:ccp:2.6.1'
 
     implementation 'com.github.blackfizz:eazegraph:1.2.2@aar'
+
+    implementation 'com.google.android.exoplayer:exoplayer-core:2.18.1'
+    implementation 'com.google.android.exoplayer:exoplayer-ui:2.18.1'
+
+    implementation "com.brightcove.player:exoplayer2:8.0.0"
 }

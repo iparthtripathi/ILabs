@@ -6,16 +6,21 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.pratik.iiits.R
+import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+
 
 class EventsActivity : AppCompatActivity() {
 
     private lateinit var bottomNavigationView: BottomNavigationView
+    private var mAuth: FirebaseAuth? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_events)
 
+
+        mAuth = FirebaseAuth.getInstance();
         bottomNavigationView = findViewById(R.id.bottom_navigation)
         bottomNavigationView.setOnNavigationItemSelectedListener { item ->
             when (item.itemId) {
@@ -29,6 +34,11 @@ class EventsActivity : AppCompatActivity() {
                 }
                 else -> false
             }
+        }
+
+        val currentUser = mAuth!!.currentUser
+        if (currentUser != null && "admin123@gmail.com" != currentUser.email) {
+            findViewById<FloatingActionButton>(R.id.fab).setVisibility(View.GONE)
         }
 
         // Load the default fragment

@@ -11,7 +11,7 @@
         android:id="@+id/headerTitle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Groups"
+        android:text="Activities"
         android:textSize="24sp"
         android:textStyle="bold"
         android:layout_marginBottom="16dp"

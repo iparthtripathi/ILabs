@@ -8,6 +8,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
+import com.pratik.iiits.Marketplace.BuyActivity
 import com.pratik.iiits.Marketplace.HomeActivity
 import com.pratik.iiits.R
 import com.pratik.iiits.chatapp.ChatAppHome
@@ -74,7 +75,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openMarket(view: View) {
-        startActivity(Intent(this@MainActivity, HomeActivity::class.java))
+        startActivity(Intent(this@MainActivity, BuyActivity::class.java))
     }
 
     private fun hook() {

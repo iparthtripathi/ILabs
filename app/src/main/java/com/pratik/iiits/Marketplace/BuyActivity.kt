@@ -1,7 +1,9 @@
 package com.pratik.iiits.Marketplace
 
+import android.content.Intent
 import com.pratik.iiits.R
 import android.os.Bundle
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -57,6 +59,10 @@ class BuyActivity : AppCompatActivity() {
             .addOnFailureListener { exception ->
                 // Handle failure
             }
+    }
+
+    fun sell(view: View) {
+        startActivity(Intent(this@BuyActivity,Sell::class.java))
     }
 
 

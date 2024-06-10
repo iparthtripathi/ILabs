@@ -41,11 +41,8 @@
         <activity
             android:name=".otpVerify"
             android:exported="false" />
-        <activity
-            android:name=".otpVerification"
-            android:exported="false" />
-        <activity
-            android:name=".welcome"
+
+        <activity android:name=".welcome"
             android:exported="false" />
         <activity
             android:name=".ChooseActivity"
