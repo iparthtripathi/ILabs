@@ -77,17 +77,32 @@ class PollAdapter(
             val selectedOptionIndex = poll.voters[userId] ?: -1
             if (selectedOptionIndex != -1) {
                 val radioButton = holder.optionsRadioGroup.getChildAt(selectedOptionIndex) as RadioButton
+                // Temporarily remove listener before updating the checked state
+                holder.optionsRadioGroup.setOnCheckedChangeListener(null)
                 radioButton.isChecked = true
+                // Re-enable listener after updating the checked state
+                holder.optionsRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                    val selectedOptionIndex = group.indexOfChild(group.findViewById(checkedId))
+                    if (selectedOptionIndex != -1) {
+                        Log.d("PollAdapter", "User selected option index: $selectedOptionIndex")
+                        registerVote(pollIds[position], selectedOptionIndex)
+                    } else {
+                        Log.e("PollAdapter", "Invalid option index selected: $selectedOptionIndex")
+                    }
+                }
             }
-        }
-
-        holder.optionsRadioGroup.setOnCheckedChangeListener { group, checkedId ->
-            val selectedOptionIndex = group.indexOfChild(group.findViewById(checkedId))
-            if (selectedOptionIndex != -1) {
-                Log.d("PollAdapter", "User selected option index: $selectedOptionIndex")
-                registerVote(pollIds[position], selectedOptionIndex)
-            } else {
-                Log.e("PollAdapter", "Invalid option index selected: $selectedOptionIndex")
+            // Disable radio buttons if user has already voted
+            disableRadioButtons(holder.optionsRadioGroup)
+        } else {
+            // Set the listener for the radio buttons
+            holder.optionsRadioGroup.setOnCheckedChangeListener { group, checkedId ->
+                val selectedOptionIndex = group.indexOfChild(group.findViewById(checkedId))
+                if (selectedOptionIndex != -1) {
+                    Log.d("PollAdapter", "User selected option index: $selectedOptionIndex")
+                    registerVote(pollIds[position], selectedOptionIndex)
+                } else {
+                    Log.e("PollAdapter", "Invalid option index selected: $selectedOptionIndex")
+                }
             }
         }
     }
@@ -127,12 +142,12 @@ class PollAdapter(
             Log.e("PollAdapter", "Error fetching poll for poll ID: $pollId", e)
         }
     }
+
     private fun disableRadioButtons(radioGroup: RadioGroup) {
         for (i in 0 until radioGroup.childCount) {
             radioGroup.getChildAt(i).isEnabled = false
         }
     }
-
 
     override fun getItemCount(): Int = polls.size
 
@@ -150,7 +165,6 @@ class PollAdapter(
         val userImageView: CircleImageView = itemView.findViewById(R.id.userimage)
         val nameTextView: TextView = itemView.findViewById(R.id.name)
     }
-
 
     private fun showPollStatsDialog(poll: Poll) {
         val dialogView = LayoutInflater.from(context).inflate(R.layout.dialog_poll_stats, null)
