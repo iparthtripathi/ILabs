@@ -1,7 +1,9 @@
 package com.pratik.iiits
 
+import android.app.Activity
 import android.content.ContentValues
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
@@ -22,6 +24,7 @@ import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.storage.FirebaseStorage
 import com.pratik.iiits.Models.Post
 import com.pratik.iiits.Models.UserModel
 import com.pratik.iiits.chatapp.ChatScreen
@@ -29,43 +32,41 @@ import com.pratik.iiits.notes.Adapters.PostsAdapter
 import com.squareup.picasso.Picasso
 import de.hdodenhof.circleimageview.CircleImageView
 
-
 class ProfilePage : AppCompatActivity() {
 
+    private val PICK_IMAGE_REQUEST = 1
     lateinit var auth: FirebaseAuth
     lateinit var database: FirebaseDatabase
-    lateinit var authid:String
+    lateinit var authid: String
     lateinit var userimage: CircleImageView
-    lateinit var username:TextView
-    lateinit var useremail:TextView
-    lateinit var userpost:TextView
-    lateinit var useremail2:TextView
-    lateinit var bio:TextView
-    lateinit var btn1:ImageButton
-    lateinit var uri:String
+    lateinit var username: TextView
+    lateinit var useremail: TextView
+    lateinit var userpost: TextView
+    lateinit var useremail2: TextView
+    lateinit var bio: TextView
+    lateinit var btn1: ImageButton
+    lateinit var uri: String
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firestoreDb: FirebaseFirestore
-    private lateinit var posts :MutableList<Post>
+    private lateinit var posts: MutableList<Post>
     private lateinit var adapter: PostsAdapter
     private var user1: UserModel? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_page)
 
-
         hook()
 
         authid = intent.getStringExtra("authuid").toString()
-        val self = intent.getBooleanExtra("self",false)
+        val self = intent.getBooleanExtra("self", false)
 
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
 
-        googleSignInClient = GoogleSignIn.getClient(this,gso)
+        googleSignInClient = GoogleSignIn.getClient(this, gso)
 
         val uri1 = intent.data
         if (uri1 != null) {
@@ -74,14 +75,12 @@ class ProfilePage : AppCompatActivity() {
         }
         val ref = database.getReference("users").child(authid)
 
-        if (self){
+        if (self) {
             btn1.setImageResource(R.drawable.ic_baseline_edit_note_24)
-        }
-        else{
+        } else {
             btn1.setImageResource(R.drawable.ic_baseline_message_24)
-
         }
-        ref.addValueEventListener(object : ValueEventListener{
+        ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 uri = snapshot.child("imageUri").value.toString()
                 Picasso.get().load(uri).into(userimage)
@@ -90,23 +89,21 @@ class ProfilePage : AppCompatActivity() {
                 useremail.text = snapshot.child("email").value.toString()
                 useremail2.text = snapshot.child("email").value.toString()
                 bio.text = snapshot.child("status").value.toString()
-
             }
 
             override fun onCancelled(error: DatabaseError) {
 
             }
-
         })
 
-        posts= mutableListOf()
+        posts = mutableListOf()
 
-        adapter= PostsAdapter(this,posts)
-        val rvPosts=findViewById<RecyclerView>(R.id.rvPosts)
+        adapter = PostsAdapter(this, posts)
+        val rvPosts = findViewById<RecyclerView>(R.id.rvPosts)
 
-        rvPosts.adapter= adapter
-        rvPosts.layoutManager= LinearLayoutManager(this)
-        firestoreDb= FirebaseFirestore.getInstance()
+        rvPosts.adapter = adapter
+        rvPosts.layoutManager = LinearLayoutManager(this)
+        firestoreDb = FirebaseFirestore.getInstance()
 
         firestoreDb.collection("users")
             .document(FirebaseAuth.getInstance().currentUser?.uid as String)
@@ -116,15 +113,16 @@ class ProfilePage : AppCompatActivity() {
                 Log.d(ContentValues.TAG, username.text.toString())
             }
 
-        val postsReference=firestoreDb.collection("posts").orderBy("creation_time_ms", Query.Direction.DESCENDING).whereEqualTo("user.username",
-            username.text.toString()
-        )
+        val postsReference = firestoreDb.collection("posts")
+            .orderBy("creation_time_ms", Query.Direction.DESCENDING)
+            .whereEqualTo("user.username", username.text.toString())
+
         postsReference.addSnapshotListener { snapshot, e ->
             if (e != null || snapshot == null) {
                 Log.w(ContentValues.TAG, "Listen failed.", e)
                 return@addSnapshotListener
             }
-            val postList=snapshot.toObjects(Post::class.java)
+            val postList = snapshot.toObjects(Post::class.java)
             posts.clear()
             posts.addAll(postList)
             adapter.notifyDataSetChanged()
@@ -132,14 +130,49 @@ class ProfilePage : AppCompatActivity() {
                 Log.d(ContentValues.TAG, "Post: $post")
             }
         }
+
+        findViewById<ImageButton>(R.id.uploadProfilePicButton).setOnClickListener {
+            openImagePicker()
+        }
+    }
+
+    private fun openImagePicker() {
+        val intent = Intent()
+        intent.type = "image/*"
+        intent.action = Intent.ACTION_GET_CONTENT
+        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK && data != null && data.data != null) {
+            val filePath = data.data
+            uploadImageToFirebase(filePath)
+        }
+    }
+
+    private fun uploadImageToFirebase(filePath: Uri?) {
+        if (filePath != null) {
+            val ref = FirebaseStorage.getInstance().reference.child("profileImages/${auth.currentUser?.uid}")
+            ref.putFile(filePath)
+                .addOnSuccessListener {
+                    ref.downloadUrl.addOnSuccessListener { uri ->
+                        database.getReference("users").child(auth.currentUser?.uid.toString())
+                            .child("imageUri").setValue(uri.toString())
+                    }
+                }
+                .addOnFailureListener {
+                    Log.e("ProfilePage", "Failed to upload image", it)
+                }
+        }
     }
 
     fun logout(view: View) {
-        val dailog : BottomSheetDialog = BottomSheetDialog(this@ProfilePage,R.style.BottomSheetStyle)
-        dailog.setContentView(R.layout.logout_dailog)
-        dailog.show()
-        val yesBtn = dailog.findViewById<TextView>(R.id.yesbtn)
-        val noBtn = dailog.findViewById<TextView>(R.id.nobtn)
+        val dialog: BottomSheetDialog = BottomSheetDialog(this@ProfilePage, R.style.BottomSheetStyle)
+        dialog.setContentView(R.layout.logout_dailog)
+        dialog.show()
+        val yesBtn = dialog.findViewById<TextView>(R.id.yesbtn)
+        val noBtn = dialog.findViewById<TextView>(R.id.nobtn)
 
         yesBtn?.setOnClickListener {
             // Sign out from Firebase Authentication
@@ -151,23 +184,22 @@ class ProfilePage : AppCompatActivity() {
                 startActivity(Intent(this@ProfilePage, welcome::class.java))
                 finishAffinity() // Close the current activity to prevent the user from returning to it using the back button
             }
-            dailog.dismiss()
+            dialog.dismiss()
         }
         noBtn?.setOnClickListener {
-            dailog.dismiss()
+            dialog.dismiss()
         }
-
     }
 
     private fun hook() {
-        auth=  FirebaseAuth.getInstance()
+        auth = FirebaseAuth.getInstance()
         database = FirebaseDatabase.getInstance()
-        userimage= findViewById(R.id.profileimage)
-        username= findViewById(R.id.profilename)
-        useremail= findViewById(R.id.profileemail)
-        useremail2= findViewById(R.id.profileemail2)
-        userpost= findViewById(R.id.profilepost)
-        bio= findViewById(R.id.statusbio)
+        userimage = findViewById(R.id.profileimage)
+        username = findViewById(R.id.profilename)
+        useremail = findViewById(R.id.profileemail)
+        useremail2 = findViewById(R.id.profileemail2)
+        userpost = findViewById(R.id.profilepost)
+        bio = findViewById(R.id.statusbio)
         btn1 = findViewById(R.id.meassgeoredit)
     }
 
@@ -175,23 +207,21 @@ class ProfilePage : AppCompatActivity() {
     fun closeprofile(view: View?) {
         finish()
     }
+
     fun shareprofile(view: View?) {
-
         val emailIntent = Intent(Intent.ACTION_SEND)
-
-        emailIntent.putExtra(Intent.EXTRA_SUBJECT, ""+intent.getStringExtra("name").toString())
+        emailIntent.putExtra(Intent.EXTRA_SUBJECT, "" + intent.getStringExtra("name").toString())
         val ss = Html.fromHtml("Find my User Details through this link, https://www.iiits.in/$authid")
-        emailIntent.putExtra(Intent.EXTRA_TEXT,ss.toString() )
-        emailIntent.type = "text/plain";
+        emailIntent.putExtra(Intent.EXTRA_TEXT, ss.toString())
+        emailIntent.type = "text/plain"
         startActivity(Intent.createChooser(emailIntent, "Send to friend"))
-
     }
+
     fun messageme(view: View?) {
         val intent = Intent(this@ProfilePage, ChatScreen::class.java)
         intent.putExtra("name", username.text.toString())
         intent.putExtra("ReciverImage", uri)
         intent.putExtra("uid", authid)
         startActivity(intent)
-
     }
 }

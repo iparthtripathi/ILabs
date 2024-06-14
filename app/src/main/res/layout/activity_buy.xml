@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-<!-- activity_buy.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@android:color/white">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -17,9 +16,9 @@
             android:layout_height="wrap_content"
             android:text="MarketPlace"
             android:textSize="@dimen/_20sdp"
-
             android:fontFamily="@font/poppins_bold"
             android:textColor="@color/black"/>
+
         <Space
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -33,7 +32,6 @@
             android:layout_gravity="center"
             android:backgroundTint="@color/white"/>
     </LinearLayout>
-
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/recyclerView"

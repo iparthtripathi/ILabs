@@ -20,6 +20,7 @@ class GroupsListActivity : AppCompatActivity() {
     private lateinit var groupsAdapter: GroupsAdapter
     private val groupsList = ArrayList<Group>()
     private var groupsListener: ListenerRegistration? = null
+    private var category: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,8 +35,12 @@ class GroupsListActivity : AppCompatActivity() {
         groupsRecyclerView.layoutManager = LinearLayoutManager(this)
         groupsRecyclerView.adapter = groupsAdapter
 
+        category = intent.getStringExtra("category")
+
         createGroupButton.setOnClickListener {
-            startActivity(Intent(this, GroupCreateActivity::class.java))
+            val intent = Intent(this, GroupCreateActivity::class.java)
+            intent.putExtra("category", category)
+            startActivity(intent)
         }
 
         listenForGroupChanges()
@@ -48,9 +53,10 @@ class GroupsListActivity : AppCompatActivity() {
 
     private fun listenForGroupChanges() {
         val currentUser = auth.currentUser
-        if (currentUser != null) {
+        if (currentUser != null && category != null) {
             groupsListener = firestore.collection("groups")
                 .whereArrayContains("members", currentUser.uid)
+                .whereEqualTo("category", category)
                 .addSnapshotListener { snapshots, e ->
                     if (e != null) {
                         return@addSnapshotListener

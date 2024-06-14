@@ -28,6 +28,7 @@ class Sell : AppCompatActivity() {
     private lateinit var etTitle: EditText
     private lateinit var etDescription: EditText
     private lateinit var etPrice: EditText
+    private lateinit var etEmail: EditText // Add this line
     private lateinit var btnUploadImages: Button
     private lateinit var btnSubmit: Button
     private lateinit var imagesPreviewContainer: LinearLayout
@@ -44,6 +45,7 @@ class Sell : AppCompatActivity() {
         etTitle = findViewById(R.id.item_title)
         etDescription = findViewById(R.id.item_description)
         etPrice = findViewById(R.id.item_price)
+        etEmail = findViewById(R.id.etEmail) // Add this line
         btnUploadImages = findViewById(R.id.upload_images_button)
         btnSubmit = findViewById(R.id.submit_button)
         imagesPreviewContainer = findViewById(R.id.images_preview_container)
@@ -56,6 +58,7 @@ class Sell : AppCompatActivity() {
         }
 
         btnSubmit.setOnClickListener {
+            btnSubmit.isEnabled = false // Disable the button on click
             uploadItem()
         }
         fetchUsername { fetchedUsername ->
@@ -81,9 +84,11 @@ class Sell : AppCompatActivity() {
         val title = etTitle.text.toString().trim()
         val description = etDescription.text.toString().trim()
         val price = etPrice.text.toString().trim()
+        val email = etEmail.text.toString().trim() // Add this line
 
-        if (title.isEmpty() || description.isEmpty() || price.isEmpty() || imageUris.isEmpty()) {
+        if (title.isEmpty() || description.isEmpty() || price.isEmpty() || email.isEmpty() || imageUris.isEmpty()) {
             Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show()
+            btnSubmit.isEnabled = true // Enable the button if input is invalid
             return
         }
 
@@ -103,26 +108,28 @@ class Sell : AppCompatActivity() {
                                 imageUrls.add(downloadUri.toString())
                                 if (imageUrls.size == imageUris.size) {
                                     // Once all images are uploaded, save the item to Firestore
-                                    saveItemToFirestore(title, description, price, imageUrls, userId, fetchedUsername, itemId)
+                                    saveItemToFirestore(title, description, price, email, imageUrls, userId, fetchedUsername, itemId)
                                 }
                             }
                         }
                         .addOnFailureListener {
                             Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                            btnSubmit.isEnabled = true // Enable the button if image upload fails
                         }
                 }
             } else {
                 // Inform the user if the username is not fetched
                 Toast.makeText(this, "Failed to fetch username", Toast.LENGTH_SHORT).show()
+                btnSubmit.isEnabled = true // Enable the button if username fetch fails
             }
         }
     }
-
 
     private fun saveItemToFirestore(
         title: String,
         description: String,
         price: String,
+        email: String, // Add this line
         imageUrls: List<String>,
         userId: String,
         username: String,
@@ -132,6 +139,7 @@ class Sell : AppCompatActivity() {
             "title" to title,
             "description" to description,
             "price" to price,
+            "email" to email, // Add this line
             "imageUrls" to imageUrls,
             "userId" to userId,
             "username" to username,
@@ -141,10 +149,12 @@ class Sell : AppCompatActivity() {
         db.collection("items").document(itemId).set(item)
             .addOnSuccessListener {
                 Toast.makeText(this, "Item uploaded successfully", Toast.LENGTH_SHORT).show()
+                btnSubmit.isEnabled = true // Enable the button after successful upload
                 finish()
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to upload item", Toast.LENGTH_SHORT).show()
+                btnSubmit.isEnabled = true // Enable the button if item upload fails
             }
     }
 

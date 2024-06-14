@@ -1,8 +1,10 @@
 package com.pratik.iiits
 
 import android.os.Bundle
+import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.EditText
+import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -19,6 +21,7 @@ class GroupCreateActivity : AppCompatActivity() {
     private lateinit var createGroupButton: Button
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
+    private lateinit var categorySpinner: Spinner
 
     private lateinit var usersAdapter: UsersAdapter
     private val usersList = ArrayList<UserModel>()
@@ -31,8 +34,13 @@ class GroupCreateActivity : AppCompatActivity() {
         groupNameEditText = findViewById(R.id.group_name_edit_text)
         usersRecyclerView = findViewById(R.id.users_recycler_view)
         createGroupButton = findViewById(R.id.create_group_button)
+        categorySpinner = findViewById(R.id.category_spinner)
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
+
+        val adapter = ArrayAdapter.createFromResource(this, R.array.categories_array, android.R.layout.simple_spinner_item)
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        categorySpinner.adapter = adapter
 
         usersAdapter = UsersAdapter(usersList, ::onUserCheckedChange)
         usersRecyclerView.layoutManager = LinearLayoutManager(this)
@@ -68,6 +76,7 @@ class GroupCreateActivity : AppCompatActivity() {
 
     private fun createGroup() {
         val groupName = groupNameEditText.text.toString().trim()
+        val category = categorySpinner.selectedItem.toString()
         if (groupName.isEmpty()) {
             groupNameEditText.error = "Group name is required"
             groupNameEditText.requestFocus()
@@ -85,7 +94,8 @@ class GroupCreateActivity : AppCompatActivity() {
                 id = groupId,
                 name = groupName,
                 admin = adminId,
-                members = members
+                members = members,
+                category = category
             )
 
             firestore.collection("groups").document(groupId)
@@ -100,4 +110,3 @@ class GroupCreateActivity : AppCompatActivity() {
         }
     }
 }
-

@@ -5,6 +5,7 @@ import com.pratik.iiits.R
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -21,7 +22,7 @@ class BuyActivity : AppCompatActivity() {
 
         db = FirebaseFirestore.getInstance()
         recyclerView = findViewById(R.id.recyclerView)
-        recyclerView.layoutManager = LinearLayoutManager(this)
+        recyclerView.layoutManager = GridLayoutManager(this, 2)
         itemList = ArrayList()
         itemAdapter = ItemAdapter(itemList)
         recyclerView.adapter = itemAdapter
@@ -65,7 +66,6 @@ class BuyActivity : AppCompatActivity() {
         startActivity(Intent(this@BuyActivity,Sell::class.java))
     }
 
-
     private fun fetchItems() {
         db.collection("items").get()
             .addOnSuccessListener { documents ->
@@ -84,6 +84,13 @@ class BuyActivity : AppCompatActivity() {
                         val (username, profilePictureUrl) = usersMap[item.userId] ?: Pair("Unknown", "")
                         item.user = username
                         item.profilePictureUrl = profilePictureUrl
+
+                        // Fetch email from the user's document
+                        db.collection("users").document(item.userId).get()
+                            .addOnSuccessListener { userDoc ->
+                                item.email = userDoc.getString("email") ?: "noemail@example.com"
+                                itemAdapter.notifyDataSetChanged()
+                            }
                     }
 
                     // Update itemList and notify adapter
@@ -96,6 +103,4 @@ class BuyActivity : AppCompatActivity() {
                 // Handle failure
             }
     }
-
-
 }

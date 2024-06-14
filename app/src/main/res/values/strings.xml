@@ -17,4 +17,13 @@
     <string name="Exit_from_chats">Are you sure want\n Log Out?</string>
     <string name="title_activity_create_post">createPost</string>
 
+    <string-array name="categories_array">
+        <item>Sports</item>
+        <item>Music</item>
+        <item>Art</item>
+        <item>Science</item>
+        <item>Technology</item>
+    </string-array>
+
+
 </resources>
