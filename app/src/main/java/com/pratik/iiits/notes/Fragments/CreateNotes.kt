@@ -77,6 +77,7 @@ class CreateNotes : Fragment() {
         Toast.makeText(requireContext(),"Notes Created Successfully",Toast.LENGTH_SHORT).show()
 
         Navigation.findNavController(it!!).navigate(R.id.action_createNotes_to_notes_Home)
+        Navigation.findNavController(it!!).popBackStack()
 
 
 

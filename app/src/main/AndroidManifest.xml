@@ -57,7 +57,7 @@
             android:name=".ChatActivity"
             android:exported="false" />
         <activity
-            android:name=".otpVerify"
+            android:name=".OtpVerifyActivity"
             android:exported="false" />
         <activity
             android:name=".welcome"

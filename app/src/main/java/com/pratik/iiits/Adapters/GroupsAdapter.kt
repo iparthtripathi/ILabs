@@ -12,7 +12,8 @@ import com.pratik.iiits.R
 
 class GroupsAdapter(
     private val groupsList: List<Group>,
-    private val onItemClick: (Group) -> Unit
+    private val onItemClick: (Group) -> Unit,
+    private val isYourGroupsList: Boolean // Added parameter
 ) : RecyclerView.Adapter<GroupsAdapter.GroupViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
@@ -30,7 +31,6 @@ class GroupsAdapter(
     inner class GroupViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val groupProfileImage: ImageView = itemView.findViewById(R.id.group_profile_image)
         private val groupName: TextView = itemView.findViewById(R.id.group_name)
-        private val groupInfo: TextView = itemView.findViewById(R.id.group_info)
 
         fun bind(group: Group) {
             groupName.text = group.name
@@ -43,6 +43,13 @@ class GroupsAdapter(
 
             itemView.setOnClickListener {
                 onItemClick(group)
+            }
+
+            // Differentiate behavior based on the list type
+            if (isYourGroupsList) {
+                // Handle your groups list logic here (e.g., show delete button)
+            } else {
+                // Handle available groups logic here (e.g., show different UI elements)
             }
         }
     }

@@ -135,6 +135,7 @@ class EditNotes : Fragment() {
         Toast.makeText(requireContext(),"Notes Updated Successfully", Toast.LENGTH_SHORT).show()
 
         Navigation.findNavController(it!!).navigate(R.id.action_editNotes_to_notes_Home)
+        Navigation.findNavController(it).popBackStack()
 
     }
 

@@ -129,7 +129,7 @@
             android:id="@+id/post_selector_layout"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
             android:layout_width="match_parent"
-            android:layout_height="55dp"
+            android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:hint="Post"
             app:boxBackgroundColor="@color/white"

@@ -28,6 +28,7 @@
             android:layout_margin="8dp"
             android:background="@color/white"
             android:text="Group Requests"
+            android:visibility="gone"
             android:textColor="@color/black"
             app:strokeColor="@color/black"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"

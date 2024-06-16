@@ -1,14 +1,18 @@
 package com.pratik.iiits
 
-
 import android.content.ContentValues.TAG
+import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
+import android.widget.TextView
+import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
@@ -38,14 +42,15 @@ class GroupsListActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        yourGroupsAdapter = GroupsAdapter(yourGroupsList, ::openGroupChat)
-        availableGroupsAdapter = GroupsAdapter(availableGroupsList, ::requestToJoinGroup)
+        yourGroupsAdapter = GroupsAdapter(yourGroupsList, ::onGroupItemClick, true) // Pass true for yourGroupsList
+        availableGroupsAdapter = GroupsAdapter(availableGroupsList, ::onGroupItemClick, false) // Pass false for availableGroupsList
         yourGroupsRecyclerView.layoutManager = LinearLayoutManager(this)
         availableGroupsRecyclerView.layoutManager = LinearLayoutManager(this)
         yourGroupsRecyclerView.adapter = yourGroupsAdapter
         availableGroupsRecyclerView.adapter = availableGroupsAdapter
 
         category = intent.getStringExtra("category")
+        findViewById<TextView>(R.id.categoryName).text=category.toString()
         Log.d(TAG, "Category received: $category")
 
         createGroupButton.setOnClickListener {
@@ -54,7 +59,31 @@ class GroupsListActivity : AppCompatActivity() {
             startActivity(intent)
         }
 
+        checkIfAdmin()
         listenForGroupChanges()
+    }
+
+    private fun checkIfAdmin() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val postInIIIT = document.getString("postinIIIT")
+                        Log.e(TAG, postInIIIT.toString())
+                        if (postInIIIT == "Admin"||postInIIIT=="Council") {
+                            createGroupButton.visibility = Button.VISIBLE
+                        } else {
+                            createGroupButton.visibility = Button.GONE
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(TAG, "Error fetching user details: $e")
+                    createGroupButton.visibility = Button.GONE
+                }
+        }
     }
 
     override fun onDestroy() {
@@ -100,11 +129,40 @@ class GroupsListActivity : AppCompatActivity() {
         }
     }
 
+    private fun onGroupItemClick(group: Group) {
+        if (yourGroupsList.contains(group)) {
+            openGroupChat(group)
+        } else {
+            showRequestDialog(group)
+        }
+    }
 
     private fun openGroupChat(group: Group) {
         val intent = Intent(this, GroupChat::class.java)
         intent.putExtra("groupId", group.id)
         startActivity(intent)
+    }
+
+    private fun showRequestDialog(group: Group) {
+        val dialogBuilder = BottomSheetDialog(this, R.style.BottomSheetStyle)
+        dialogBuilder.setContentView(R.layout.request_dialog)
+            dialogBuilder.show()
+                val yes=dialogBuilder.findViewById<TextView>(R.id.yesbtn)
+                val no=dialogBuilder.findViewById<TextView>(R.id.nobtn)
+                val requestTitle=dialogBuilder.findViewById<TextView>(R.id.requestTitle)
+        requestTitle?.text = "Do you want to send a request to join ${group.name}?"
+        if (no != null) {
+            if (yes != null) {
+                yes.setOnClickListener {
+                    requestToJoinGroup(group)
+                    dialogBuilder.dismiss()
+                }
+                no.setOnClickListener {
+                    dialogBuilder.dismiss()
+                }
+            }
+        }
+
     }
 
     private fun requestToJoinGroup(group: Group) {
@@ -125,8 +183,8 @@ class GroupsListActivity : AppCompatActivity() {
                 .add(groupRequest)
                 .addOnSuccessListener {
                     // Notify user that request has been sent
+                    Toast.makeText(this, "Request sent to join ${group.name}", Toast.LENGTH_SHORT).show()
                 }
         }
     }
-
 }

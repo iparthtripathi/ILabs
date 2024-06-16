@@ -12,7 +12,7 @@ import com.pratik.iiits.databinding.ActivityOtpVerifyBinding
 import com.hbb20.CountryCodePicker
 import java.util.concurrent.TimeUnit
 
-class otpVerify : AppCompatActivity() {
+class OtpVerifyActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityOtpVerifyBinding
     private lateinit var auth: FirebaseAuth
@@ -33,6 +33,7 @@ class otpVerify : AppCompatActivity() {
         binding.sendOtpButton.setOnClickListener { sendVerificationCode() }
         binding.verifyOtpButton.setOnClickListener { verifyCode() }
         binding.resendOtpButton.setOnClickListener { resendVerificationCode() }
+        binding.changeNumberButton.setOnClickListener { changePhoneNumber() }
 
         callbacks = object : PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
             override fun onVerificationCompleted(credential: PhoneAuthCredential) {
@@ -40,13 +41,13 @@ class otpVerify : AppCompatActivity() {
             }
 
             override fun onVerificationFailed(e: FirebaseException) {
-                Toast.makeText(this@otpVerify, "Verification Failed: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@OtpVerifyActivity, "Verification Failed: ${e.message}", Toast.LENGTH_SHORT).show()
             }
 
             override fun onCodeSent(verificationId: String, token: PhoneAuthProvider.ForceResendingToken) {
-                this@otpVerify.verificationId = verificationId
-                this@otpVerify.resendToken = token
-                Toast.makeText(this@otpVerify, "OTP Sent", Toast.LENGTH_SHORT).show()
+                this@OtpVerifyActivity.verificationId = verificationId
+                this@OtpVerifyActivity.resendToken = token
+                Toast.makeText(this@OtpVerifyActivity, "OTP Sent", Toast.LENGTH_SHORT).show()
                 startCountdown()
             }
         }
@@ -66,6 +67,7 @@ class otpVerify : AppCompatActivity() {
         auth.signInWithCredential(credential).addOnCompleteListener(this) { task ->
             if (task.isSuccessful) {
                 startActivity(Intent(this, login_user::class.java))
+                finish() // Ensure the activity is finished after successful login
             } else {
                 val message = if (task.exception is FirebaseAuthInvalidCredentialsException) {
                     "Invalid OTP"
@@ -87,10 +89,10 @@ class otpVerify : AppCompatActivity() {
             binding.sendOtpButton.visibility = View.GONE
             binding.verifyOtpButton.visibility = View.VISIBLE
             binding.resendOtpButton.visibility = View.VISIBLE
+            binding.changeNumberButton.visibility = View.VISIBLE
             binding.otpLayout.visibility = View.VISIBLE
             binding.textInputLayout.visibility = View.GONE
             binding.instructionText.visibility = View.GONE
-            binding.otpInstructionText.visibility = View.VISIBLE
 
             val options = PhoneAuthOptions.newBuilder(auth)
                 .setPhoneNumber(fullPhoneNumber)
@@ -122,9 +124,24 @@ class otpVerify : AppCompatActivity() {
                 .setForceResendingToken(resendToken!!)
                 .build()
             PhoneAuthProvider.verifyPhoneNumber(options)
+            startCountdown()
         } else {
             Toast.makeText(this, "Cannot resend OTP at the moment", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun changePhoneNumber() {
+        binding.phonebox.text?.clear()
+        binding.otpbox.text?.clear()
+        binding.otpbox.visibility = View.GONE
+        binding.otpInstructionText.visibility = View.GONE
+        binding.sendOtpButton.visibility = View.VISIBLE
+        binding.verifyOtpButton.visibility = View.GONE
+        binding.resendOtpButton.visibility = View.GONE
+        binding.changeNumberButton.visibility = View.GONE
+        binding.otpLayout.visibility = View.GONE
+        binding.textInputLayout.visibility = View.VISIBLE
+        binding.instructionText.visibility = View.VISIBLE
     }
 
     private fun startCountdown() {

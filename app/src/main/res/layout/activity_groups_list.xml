@@ -7,6 +7,14 @@
     android:padding="16dp"
     android:background="@color/white">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/categoryName"
+        android:textColor="@color/black"
+        android:fontFamily="@font/poppins_bold"
+        android:textSize="20sp"/>
+
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -21,6 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:text="Create Group"
+            android:visibility="gone"
             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             app:icon="@drawable/ic_buy"
             app:iconPadding="8dp"
