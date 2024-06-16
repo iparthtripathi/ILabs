@@ -20,6 +20,11 @@ class CategoriesActivity : AppCompatActivity() {
         categoriesRecyclerView.layoutManager = LinearLayoutManager(this)
         categoriesRecyclerView.adapter = CategoryAdapter(categoriesList, ::openCategory)
 
+        findViewById<Button>(R.id.group_requests_button).setOnClickListener {
+            val intent = Intent(this, GroupRequestsActivity::class.java)
+            startActivity(intent)
+        }
+
     }
 
     private fun openCategory(category: String) {
