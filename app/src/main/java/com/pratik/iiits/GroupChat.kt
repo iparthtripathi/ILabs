@@ -53,7 +53,7 @@ class GroupChat : AppCompatActivity() {
 
         groupId = intent.getStringExtra("groupId")!!
 
-        messagesAdapter = MessagesAdapter(messagesList)
+        messagesAdapter = MessagesAdapter(this,messagesList)
         messagesRecyclerView.layoutManager = LinearLayoutManager(this)
         messagesRecyclerView.adapter = messagesAdapter
 

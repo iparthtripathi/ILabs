@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/white"
     tools:context=".GroupChat">
 
     <!-- Header with group name -->
@@ -29,18 +30,22 @@
     </LinearLayout>
 
     <!-- RecyclerView for messages -->
+
+    <!-- Image preview layout -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/messages_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@id/header_layout"
         android:layout_above="@id/message_input_layout2"
+        android:layout_below="@id/header_layout"
         android:layout_margin="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/white"
         android:clipToPadding="false"
         android:padding="8dp"
         android:scrollbars="vertical" />
 
-    <!-- Image preview layout -->
     <LinearLayout
         android:layout_width="match_parent"
         android:id="@+id/message_input_layout2"
@@ -58,7 +63,6 @@
             android:scaleType="centerCrop"
             android:contentDescription="Image Preview" />
 
-
         <LinearLayout
             android:id="@+id/message_input_layout"
             android:layout_width="match_parent"
@@ -75,6 +79,7 @@
                 android:layout_height="wrap_content"
                 android:src="@android:drawable/ic_menu_camera"
                 android:background="?attr/selectableItemBackgroundBorderless"
+                android:layout_margin="@dimen/_5sdp"
                 android:contentDescription="Send Image" />
 
             <EditText
@@ -91,12 +96,11 @@
 
             <Button
                 android:id="@+id/send_button"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Send"
-                android:background="?attr/colorPrimary"
-                android:textColor="@android:color/white"
-                android:layout_gravity="center_vertical" />
+                android:layout_width="@dimen/_30sdp"
+                android:layout_height="@dimen/_30sdp"
+                android:background="@drawable/send_btn"
+                android:layout_margin="@dimen/_5sdp"
+                android:contentDescription="Send Message" />
         </LinearLayout>
 
     </LinearLayout>

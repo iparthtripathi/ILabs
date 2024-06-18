@@ -66,13 +66,12 @@
 
             <ImageButton
                 android:id="@+id/uploadProfilePicButton"
-                android:layout_width="39dp"
+                android:layout_width="36dp"
                 android:layout_height="30dp"
                 android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_10sdp"
                 android:background="@drawable/baseline_photo_camera_24"
-                android:contentDescription="Upload Profile Picture"
-                android:scaleType="fitXY" />
+                android:contentDescription="Upload Profile Picture" />
 
             <TextView
                 android:id="@+id/profilename"
@@ -105,7 +104,28 @@
                 android:text="gmail@gmail.com"
                 android:textColor="@color/grey"
                 android:textSize="@dimen/_14sdp" />
+            <TextView
+                android:id="@+id/rolesTitle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/_10sdp"
+                android:layout_gravity="center_horizontal"
+                android:text="Roles"
+                android:textSize="@dimen/_18sdp"
+                android:textColor="@color/black"
+                android:fontFamily="@font/poppins_bold" />
 
+
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rolesRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:clipToPadding="false"
+                android:overScrollMode="never"
+                android:orientation="horizontal"
+                />
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -126,6 +146,32 @@
                     android:onClick="messageme"
                     android:src="@drawable/ic_baseline_message_24"
                     android:contentDescription="Message" />
+
+                <Space
+                    android:layout_width="@dimen/_10sdp"
+                    android:layout_height="wrap_content" />
+
+                <ImageButton
+                    android:layout_width="@dimen/_37sdp"
+                    android:layout_height="@dimen/_37sdp"
+                    android:background="@drawable/profile_btn_grey"
+                    android:onClick="userrole"
+                    android:src="@drawable/ic_subgroup"
+                    android:contentDescription="Mail" />
+
+                <Space
+                    android:layout_width="@dimen/_10sdp"
+                    android:layout_height="wrap_content" />
+
+                <ImageButton
+                    android:layout_width="@dimen/_37sdp"
+                    android:layout_height="@dimen/_37sdp"
+                    android:background="@drawable/profile_btn_grey"
+                    android:onClick="admin"
+                    android:src="@drawable/ic_group"
+                    android:contentDescription="Mail" />
+
+
 
                 <Space
                     android:layout_width="@dimen/_10sdp"

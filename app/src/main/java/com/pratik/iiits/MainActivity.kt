@@ -75,6 +75,10 @@ class MainActivity : AppCompatActivity() {
     }
 
 
+    fun openCalender(view: View) {
+        startActivity(Intent(this@MainActivity,Calender::class.java))
+
+    }
 
     fun opennotesactivity(view: View?) {
         val intent = Intent(this@MainActivity, NotesActivity::class.java)

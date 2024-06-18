@@ -1,4 +1,4 @@
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -75,184 +75,229 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:weightSum="2">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/_130sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:alpha="1"
                     android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/_8sdp"
+                    android:layout_gravity="center"
                     android:clickable="true"
                     android:onClick="opennotesactivity"
-                    app:cardBackgroundColor="@color/teal"
-                    app:cardCornerRadius="@dimen/_10sdp">
+                    app:cardBackgroundColor="@color/yellow"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="My Notes"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_13sdp" />
 
-                        <ImageButton
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:background="@drawable/btn_back"
-                            android:src="@drawable/ic_baseline_edit_note_24" />
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.6"
+                        android:src="@drawable/notes" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/spartan_bold"
-                            android:text="My Notes"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_9sdp"
-                            android:layout_marginTop="@dimen/_4sdp" />
-                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
+                    android:layout_width="match_parent"
                     android:layout_height="@dimen/_130sdp"
+                    android:layout_gravity="center"
                     android:layout_weight="1"
-                    android:layout_marginStart="@dimen/_8sdp"
+                    android:alpha="1"
                     android:clickable="true"
                     android:onClick="openEvents"
-                    app:cardBackgroundColor="@color/coral"
-                    app:cardCornerRadius="@dimen/_10sdp">
+                    app:cardBackgroundColor="@color/ivory"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
 
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Announcements"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/_12sdp" />
 
-                        <ImageButton
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:src="@drawable/chatting_person"
-                            android:background="@color/coral"
-                            android:scaleType="fitXY"/>
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.6"
+                        android:src="@drawable/chatting_person" />
 
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/spartan_bold"
-                            android:text="Activities"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_9sdp"
-                            android:layout_marginTop="@dimen/_4sdp" />
-                    </LinearLayout>
                 </androidx.cardview.widget.CardView>
+
+
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_gravity="center"
                 android:layout_marginTop="@dimen/_16sdp"
                 android:weightSum="2">
 
                 <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_130sdp"
-                    android:layout_weight="1"
-                    android:layout_marginEnd="@dimen/_8sdp"
-                    android:clickable="true"
-                    android:onClick="openGroups"
-                    app:cardBackgroundColor="@color/colorPrimary"
-                    app:cardCornerRadius="@dimen/_10sdp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <ImageButton
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:background="@color/colorPrimary"
-                            android:src="@drawable/img5"
-                            android:scaleType="fitXY"/>
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/spartan_bold"
-                            android:text="Groups"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_9sdp"
-                            android:layout_marginTop="@dimen/_4sdp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-
-                <androidx.cardview.widget.CardView
-                    android:layout_width="0dp"
-                    android:layout_height="@dimen/_130sdp"
-                    android:layout_weight="1"
-                    android:layout_marginStart="@dimen/_8sdp"
-                    android:clickable="true"
-                    android:onClick="openMarket"
-                    app:cardBackgroundColor="@color/misty"
-                    app:cardCornerRadius="@dimen/_10sdp">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:orientation="vertical"
-                        android:gravity="center">
-
-                        <ImageButton
-                            android:layout_width="@dimen/_40sdp"
-                            android:layout_height="@dimen/_40sdp"
-                            android:background="@drawable/btn_back"
-                            android:src="@drawable/ic_buy" />
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="@font/spartan_bold"
-                            android:text="Marketplace"
-                            android:textColor="@color/white"
-                            android:textSize="@dimen/_9sdp"
-                            android:layout_marginTop="@dimen/_4sdp" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
-
-            <androidx.cardview.widget.CardView
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/_130sdp"
-                android:layout_marginTop="@dimen/_16sdp"
-                android:clickable="true"
-                android:onClick="openMaps"
-                app:cardBackgroundColor="@color/darktheme_back"
-                app:cardCornerRadius="@dimen/_10sdp">
-
-                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:orientation="vertical"
-                    android:gravity="center">
-
-                    <ImageButton
-                        android:layout_width="@dimen/_40sdp"
-                        android:layout_height="@dimen/_40sdp"
-                        android:background="@color/darktheme_back"
-                        android:src="@drawable/maps"
-                        android:scaleType="fitXY"/>
+                    android:layout_height="@dimen/_130sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:alpha="1"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:onClick="openMaps"
+                    app:cardBackgroundColor="@color/honey"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
 
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/spartan_bold"
-                        android:text="Community Map"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Community \nMap"
+                        android:textColor="@color/smoke"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.6"
+                        android:src="@drawable/maps" />
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_130sdp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:alpha="1"
+                    android:clickable="true"
+                    android:onClick="openMarket"
+                    app:cardBackgroundColor="@color/white"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="MarketPlace"
+                        android:textColor="@color/blue"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.4"
+                        android:src="@drawable/market" />
+
+                </androidx.cardview.widget.CardView>
+
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_gravity="center"
+                android:layout_marginTop="@dimen/_16sdp"
+                android:weightSum="2">
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_130sdp"
+                    android:layout_marginEnd="@dimen/_10sdp"
+                    android:alpha="1"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:clickable="true"
+                    android:onClick="openGroups"
+                    app:cardBackgroundColor="@color/colorPrimary"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Groups"
                         android:textColor="@color/white"
-                        android:textSize="@dimen/_9sdp"
-                        android:layout_marginTop="@dimen/_4sdp" />
-                </LinearLayout>
-            </androidx.cardview.widget.CardView>
+                        android:textSize="@dimen/_13sdp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.6"
+                        android:src="@drawable/img5"/>
+
+                </androidx.cardview.widget.CardView>
+
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/_130sdp"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:alpha="1"
+                    android:clickable="true"
+                    android:onClick="openCalender"
+                    app:cardBackgroundColor="@color/purple_200"
+                    app:cardCornerRadius="@dimen/_5sdp"
+                    app:cardElevation="@dimen/_5sdp">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/_15sdp"
+                        android:fontFamily="@font/poppins_bold"
+                        android:text="Calendar"
+                        android:textColor="@color/ivory"
+                        android:textSize="@dimen/_13sdp" />
+
+                    <ImageView
+                        android:layout_width="@dimen/_120sdp"
+                        android:layout_height="@dimen/_100sdp"
+                        android:layout_gravity="bottom|right"
+                        android:layout_marginRight="-20dp"
+                        android:layout_marginBottom="-20dp"
+                        android:alpha="0.4"
+                        android:src="@drawable/calendar" />
+
+                </androidx.cardview.widget.CardView>
+
+
+            </LinearLayout>
 
             <!-- Quick Links -->
             <TextView
@@ -305,6 +350,9 @@
                     android:textSize="@dimen/_10sdp"
                     android:layout_marginTop="@dimen/_10sdp" />
             </LinearLayout>
+
         </LinearLayout>
+
     </RelativeLayout>
-</ScrollView>
+
+</androidx.core.widget.NestedScrollView>

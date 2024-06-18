@@ -1,7 +1,8 @@
 package com.pratik.iiits
 
+
+import android.annotation.SuppressLint
 import android.app.Activity
-import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -10,6 +11,7 @@ import android.util.Log
 import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -26,7 +28,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import com.google.firebase.storage.FirebaseStorage
 import com.pratik.iiits.Models.Post
-import com.pratik.iiits.Models.UserModel
+import com.pratik.iiits.Role.AdminDashboardActivity
+import com.pratik.iiits.Role.RoleAdapter
+import com.pratik.iiits.Role.RoleRequest
+
+import com.pratik.iiits.Role.UserRoleManagementActivity
 import com.pratik.iiits.chatapp.ChatScreen
 import com.pratik.iiits.notes.Adapters.PostsAdapter
 import com.squareup.picasso.Picasso
@@ -44,23 +50,33 @@ class ProfilePage : AppCompatActivity() {
     lateinit var userpost: TextView
     lateinit var useremail2: TextView
     lateinit var bio: TextView
+    lateinit var rolesTextView: TextView
     lateinit var btn1: ImageButton
     lateinit var uri: String
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firestoreDb: FirebaseFirestore
     private lateinit var posts: MutableList<Post>
     private lateinit var adapter: PostsAdapter
-    private var user1: UserModel? = null
+    private lateinit var rolesRecyclerView: RecyclerView
+    private lateinit var roleAdapter: RoleAdapter
+    private val roleList = mutableListOf<RoleRequest>()
 
+
+
+
+    @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile_page)
 
+        // Initialize views
         hook()
 
+        // Fetch user ID passed from previous activity or deep link
         authid = intent.getStringExtra("authuid").toString()
         val self = intent.getBooleanExtra("self", false)
 
+        // Configure Google Sign-In
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
@@ -68,20 +84,20 @@ class ProfilePage : AppCompatActivity() {
 
         googleSignInClient = GoogleSignIn.getClient(this, gso)
 
+        // Check if the activity was launched from a deep link
         val uri1 = intent.data
         if (uri1 != null) {
             val parameters: List<String> = uri1.pathSegments
             authid = parameters[parameters.size - 1]
         }
+
+        // Reference to Firebase Database
         val ref = database.getReference("users").child(authid)
 
-        if (self) {
-            btn1.setImageResource(R.drawable.ic_baseline_edit_note_24)
-        } else {
-            btn1.setImageResource(R.drawable.ic_baseline_message_24)
-        }
+        // Set up listener to fetch user data
         ref.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
+                // Populate UI elements with user data
                 uri = snapshot.child("imageUri").value.toString()
                 Picasso.get().load(uri).into(userimage)
                 username.text = snapshot.child("name").value.toString()
@@ -92,34 +108,37 @@ class ProfilePage : AppCompatActivity() {
             }
 
             override fun onCancelled(error: DatabaseError) {
-
+                Toast.makeText(this@ProfilePage, "Failed to load user data", Toast.LENGTH_SHORT)
+                    .show()
             }
         })
 
+        // Set up RecyclerView for posts
         posts = mutableListOf()
-
         adapter = PostsAdapter(this, posts)
         val rvPosts = findViewById<RecyclerView>(R.id.rvPosts)
-
         rvPosts.adapter = adapter
         rvPosts.layoutManager = LinearLayoutManager(this)
+
+        // Initialize Firestore instance
         firestoreDb = FirebaseFirestore.getInstance()
 
-        firestoreDb.collection("users")
-            .document(FirebaseAuth.getInstance().currentUser?.uid as String)
-            .get()
-            .addOnSuccessListener { userSnapshot ->
-                user1 = userSnapshot.toObject(UserModel::class.java)
-                Log.d(ContentValues.TAG, username.text.toString())
-            }
+        rolesRecyclerView = findViewById(R.id.rolesRecyclerView)
+        roleAdapter = RoleAdapter(roleList)
+        rolesRecyclerView.adapter = roleAdapter
+        rolesRecyclerView.layoutManager = LinearLayoutManager(this)
 
+        fetchAssignedRoles()
+
+
+        // Fetch user's posts from Firestore
         val postsReference = firestoreDb.collection("posts")
             .orderBy("creation_time_ms", Query.Direction.DESCENDING)
             .whereEqualTo("user.username", username.text.toString())
 
         postsReference.addSnapshotListener { snapshot, e ->
             if (e != null || snapshot == null) {
-                Log.w(ContentValues.TAG, "Listen failed.", e)
+                Log.w("ProfilePage", "Listen failed.", e)
                 return@addSnapshotListener
             }
             val postList = snapshot.toObjects(Post::class.java)
@@ -127,13 +146,27 @@ class ProfilePage : AppCompatActivity() {
             posts.addAll(postList)
             adapter.notifyDataSetChanged()
             for (post in postList) {
-                Log.d(ContentValues.TAG, "Post: $post")
+                Log.d("ProfilePage", "Post: $post")
             }
         }
 
+        // Set up button to open image picker
         findViewById<ImageButton>(R.id.uploadProfilePicButton).setOnClickListener {
             openImagePicker()
         }
+    }
+
+    private fun hook() {
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
+        userimage = findViewById(R.id.profileimage)
+        username = findViewById(R.id.profilename)
+        useremail = findViewById(R.id.profileemail)
+        useremail2 = findViewById(R.id.profileemail2)
+        userpost = findViewById(R.id.profilepost)
+        bio = findViewById(R.id.statusbio)
+
+        btn1 = findViewById(R.id.meassgeoredit)
     }
 
     private fun openImagePicker() {
@@ -150,10 +183,33 @@ class ProfilePage : AppCompatActivity() {
             uploadImageToFirebase(filePath)
         }
     }
+    private fun fetchAssignedRoles() {
+        val userId = auth.currentUser?.uid ?: return
+        firestoreDb.collection("roleRequests")
+            .whereEqualTo("userId", userId)
+            .whereEqualTo("status", "approved")
+            .get()
+            .addOnSuccessListener { result ->
+                roleList.clear()
+                for (document in result) {
+                    val role = document.toObject(RoleRequest::class.java)
+                    role.id = document.id
+                    roleList.add(role)
+                }
+                roleAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener {
+                Toast.makeText(this, "Failed to fetch assigned roles", Toast.LENGTH_SHORT).show()
+            }
+    }
+
+
+
 
     private fun uploadImageToFirebase(filePath: Uri?) {
         if (filePath != null) {
-            val ref = FirebaseStorage.getInstance().reference.child("profileImages/${auth.currentUser?.uid}")
+            val ref =
+                FirebaseStorage.getInstance().reference.child("profileImages/${auth.currentUser?.uid}")
             ref.putFile(filePath)
                 .addOnSuccessListener {
                     ref.downloadUrl.addOnSuccessListener { uri ->
@@ -168,7 +224,8 @@ class ProfilePage : AppCompatActivity() {
     }
 
     fun logout(view: View) {
-        val dialog: BottomSheetDialog = BottomSheetDialog(this@ProfilePage, R.style.BottomSheetStyle)
+        val dialog: BottomSheetDialog =
+            BottomSheetDialog(this@ProfilePage, R.style.BottomSheetStyle)
         dialog.setContentView(R.layout.logout_dailog)
         dialog.show()
         val yesBtn = dialog.findViewById<TextView>(R.id.yesbtn)
@@ -191,16 +248,14 @@ class ProfilePage : AppCompatActivity() {
         }
     }
 
-    private fun hook() {
-        auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance()
-        userimage = findViewById(R.id.profileimage)
-        username = findViewById(R.id.profilename)
-        useremail = findViewById(R.id.profileemail)
-        useremail2 = findViewById(R.id.profileemail2)
-        userpost = findViewById(R.id.profilepost)
-        bio = findViewById(R.id.statusbio)
-        btn1 = findViewById(R.id.meassgeoredit)
+    fun userrole(view: View?) {
+        val intent = Intent(this@ProfilePage, UserRoleManagementActivity::class.java)
+        startActivity(intent)
+    }
+
+    fun admin(view: View?) {
+        val intent = Intent(this@ProfilePage, AdminDashboardActivity::class.java)
+        startActivity(intent)
     }
 
     fun mailme(view: View?) {}
@@ -211,7 +266,8 @@ class ProfilePage : AppCompatActivity() {
     fun shareprofile(view: View?) {
         val emailIntent = Intent(Intent.ACTION_SEND)
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, "" + intent.getStringExtra("name").toString())
-        val ss = Html.fromHtml("Find my User Details through this link, https://www.iiits.in/$authid")
+        val ss =
+            Html.fromHtml("Find my User Details through this link, https://www.iiits.in/$authid")
         emailIntent.putExtra(Intent.EXTRA_TEXT, ss.toString())
         emailIntent.type = "text/plain"
         startActivity(Intent.createChooser(emailIntent, "Send to friend"))
@@ -221,7 +277,6 @@ class ProfilePage : AppCompatActivity() {
         val intent = Intent(this@ProfilePage, ChatScreen::class.java)
         intent.putExtra("name", username.text.toString())
         intent.putExtra("ReciverImage", uri)
-        intent.putExtra("uid", authid)
-        startActivity(intent)
+
     }
 }

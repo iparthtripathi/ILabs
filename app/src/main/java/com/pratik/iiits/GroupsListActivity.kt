@@ -18,6 +18,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
 import com.pratik.iiits.Adapters.GroupsAdapter
 import com.pratik.iiits.Models.Group
+import com.pratik.iiits.Role.UserRoleManagementActivity
 
 class GroupsListActivity : AppCompatActivity() {
     private lateinit var createGroupButton: Button
@@ -155,6 +156,8 @@ class GroupsListActivity : AppCompatActivity() {
             if (yes != null) {
                 yes.setOnClickListener {
                     requestToJoinGroup(group)
+                    val intent = Intent(this, UserRoleManagementActivity::class.java)
+                    startActivity(intent)
                     dialogBuilder.dismiss()
                 }
                 no.setOnClickListener {
