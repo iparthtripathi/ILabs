@@ -43,8 +43,8 @@ class GroupsListActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        yourGroupsAdapter = GroupsAdapter(yourGroupsList, ::onGroupItemClick, true) // Pass true for yourGroupsList
-        availableGroupsAdapter = GroupsAdapter(availableGroupsList, ::onGroupItemClick, false) // Pass false for availableGroupsList
+        yourGroupsAdapter = GroupsAdapter(yourGroupsList, ::onGroupItemClick, ::onGroupItemLongClick, true) // Pass long click handler for your groups
+        availableGroupsAdapter = GroupsAdapter(availableGroupsList, ::onGroupItemClick, {}, false) // No long click handler for available groups
         yourGroupsRecyclerView.layoutManager = LinearLayoutManager(this)
         availableGroupsRecyclerView.layoutManager = LinearLayoutManager(this)
         yourGroupsRecyclerView.adapter = yourGroupsAdapter
@@ -62,6 +62,45 @@ class GroupsListActivity : AppCompatActivity() {
 
         checkIfAdmin()
         listenForGroupChanges()
+    }
+
+    private fun onGroupItemLongClick(group: Group) {
+        // Check if the current user is an admin
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            firestore.collection("users").document(currentUser.uid).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val postInIIIT = document.getString("postinIIIT")
+                        if (postInIIIT == "Admin" || postInIIIT == "Council") {
+                            showDeleteConfirmationDialog(group)
+                        } else {
+                            Toast.makeText(this, "Only admins can delete groups", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+        }
+    }
+    private fun showDeleteConfirmationDialog(group: Group) {
+        AlertDialog.Builder(this)
+            .setTitle("Delete Group")
+            .setMessage("Are you sure you want to delete ${group.name}?")
+            .setPositiveButton("Yes") { _, _ -> deleteGroup(group) }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun deleteGroup(group: Group) {
+        firestore.collection("groups").document(group.id).delete()
+            .addOnSuccessListener {
+                Toast.makeText(this, "${group.name} deleted", Toast.LENGTH_SHORT).show()
+                yourGroupsList.remove(group)
+                yourGroupsAdapter.notifyDataSetChanged()
+            }
+            .addOnFailureListener { e ->
+                Log.e(TAG, "Error deleting group", e)
+                Toast.makeText(this, "Failed to delete ${group.name}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun checkIfAdmin() {

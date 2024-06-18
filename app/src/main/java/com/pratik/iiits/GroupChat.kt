@@ -36,6 +36,7 @@ class GroupChat : AppCompatActivity() {
 
     private val PICK_IMAGE_REQUEST = 1
     private var imageUri: Uri? = null
+    private lateinit var exitGroupButton: ImageButton
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +51,7 @@ class GroupChat : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
+        exitGroupButton = findViewById(R.id.exit_group_button)
 
         groupId = intent.getStringExtra("groupId")!!
 
@@ -66,6 +68,10 @@ class GroupChat : AppCompatActivity() {
             }
         }
 
+        exitGroupButton.setOnClickListener {
+            showExitGroupConfirmationDialog()
+        }
+
         groupNameTextView.setOnClickListener {
             showGroupMembersDialog()
         }
@@ -80,6 +86,48 @@ class GroupChat : AppCompatActivity() {
         loadGroupDetails()
         loadMessages()
     }
+
+    private fun showExitGroupConfirmationDialog() {
+        AlertDialog.Builder(this)
+            .setTitle("Exit Group")
+            .setMessage("Are you sure you want to exit the group?")
+            .setPositiveButton("Yes") { _, _ ->
+                exitGroup()
+            }
+            .setNegativeButton("No", null)
+            .show()
+    }
+
+    private fun exitGroup() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            firestore.collection("groups").document(groupId).get()
+                .addOnSuccessListener { document ->
+                    val group = document.toObject(Group::class.java)
+                    if (group != null) {
+                        val updatedMembers = group.members.toMutableList()
+                        updatedMembers.remove(currentUser.uid)
+
+                        firestore.collection("groups").document(groupId)
+                            .update("members", updatedMembers)
+                            .addOnSuccessListener {
+                                Toast.makeText(
+                                    this,
+                                    "You have exited the group",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                                finish() // Close the group chat activity
+                            }
+                            .addOnFailureListener { e ->
+                                Toast.makeText(this, "Failed to exit the group", Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                    }
+                }
+        }
+    }
+
+
 
     private fun loadGroupDetails() {
         firestore.collection("groups").document(groupId)

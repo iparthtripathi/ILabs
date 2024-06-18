@@ -27,6 +27,23 @@
             android:textStyle="bold"
             android:layout_gravity="center_vertical"
             android:layout_marginStart="8dp" />
+        <Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+
+        <ImageButton
+            android:id="@+id/exit_group_button"
+            android:layout_width="@dimen/_50sdp"
+            android:layout_height="@dimen/_50sdp"
+            android:layout_alignParentEnd="true"
+            android:paddingStart="@dimen/_10sdp"
+            android:layout_gravity="center"
+            android:layout_weight="0"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Exit"
+            android:src="@drawable/baseline_logout_24"
+            app:tint="@color/white" />
     </LinearLayout>
 
     <!-- RecyclerView for messages -->

@@ -13,6 +13,7 @@ import com.pratik.iiits.R
 class GroupsAdapter(
     private val groupsList: List<Group>,
     private val onItemClick: (Group) -> Unit,
+    private val onItemLongClick: (Group) -> Unit, // Add a callback for long press
     private val isYourGroupsList: Boolean // Added parameter
 ) : RecyclerView.Adapter<GroupsAdapter.GroupViewHolder>() {
 
@@ -45,6 +46,11 @@ class GroupsAdapter(
                 onItemClick(group)
             }
 
+            itemView.setOnLongClickListener {
+                onItemLongClick(group)
+                true
+            }
+
             // Differentiate behavior based on the list type
             if (isYourGroupsList) {
                 // Handle your groups list logic here (e.g., show delete button)
@@ -54,3 +60,4 @@ class GroupsAdapter(
         }
     }
 }
+
