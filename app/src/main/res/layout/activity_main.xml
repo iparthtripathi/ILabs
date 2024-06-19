@@ -249,7 +249,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/_15sdp"
                         android:fontFamily="@font/poppins_bold"
-                        android:text="Groups"
+                        android:text="Community"
                         android:textColor="@color/white"
                         android:textSize="@dimen/_13sdp" />
 

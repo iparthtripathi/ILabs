@@ -4,17 +4,23 @@ import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Button
+import androidx.activity.viewModels
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.button.MaterialButton
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.pratik.iiits.Adapters.CategoryAdapter
 
 class CategoriesActivity : AppCompatActivity() {
+
     private lateinit var categoriesRecyclerView: RecyclerView
-    private val categoriesList = listOf("Sports", "Music", "Art", "Science", "Technology")
+    private val categoryViewModel: CategoryViewModel by viewModels()
     private lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
 
@@ -24,16 +30,23 @@ class CategoriesActivity : AppCompatActivity() {
 
         categoriesRecyclerView = findViewById(R.id.categories_recycler_view)
         categoriesRecyclerView.layoutManager = LinearLayoutManager(this)
-        categoriesRecyclerView.adapter = CategoryAdapter(categoriesList, ::openCategory)
+
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
         checkIfAdmin()
 
-        findViewById<Button>(R.id.group_requests_button).setOnClickListener {
+        categoryViewModel.categories.observe(this, Observer { categories ->
+            categoriesRecyclerView.adapter = CategoryAdapter(categories, ::openCategory)
+        })
+
+        findViewById<MaterialButton>(R.id.group_requests_button).setOnClickListener {
             val intent = Intent(this, GroupRequestsActivity::class.java)
             startActivity(intent)
         }
 
+        findViewById<MaterialButton>(R.id.add_category_button).setOnClickListener {
+            showAddCategoryDialog()
+        }
     }
 
     private fun checkIfAdmin() {
@@ -45,16 +58,19 @@ class CategoriesActivity : AppCompatActivity() {
                     if (document != null && document.exists()) {
                         val postInIIIT = document.getString("postinIIIT")
                         Log.e(ContentValues.TAG, postInIIIT.toString())
-                        if (postInIIIT == "Admin"||postInIIIT=="Council") {
-                            findViewById<Button>(R.id.group_requests_button).visibility = Button.VISIBLE
+                        if (postInIIIT == "Admin" || postInIIIT == "Council") {
+                            findViewById<MaterialButton>(R.id.group_requests_button).visibility = MaterialButton.VISIBLE
+                            findViewById<MaterialButton>(R.id.add_category_button).visibility = MaterialButton.VISIBLE
                         } else {
-                            findViewById<Button>(R.id.group_requests_button).visibility = Button.GONE
+                            findViewById<MaterialButton>(R.id.group_requests_button).visibility = MaterialButton.GONE
+                            findViewById<MaterialButton>(R.id.add_category_button).visibility = MaterialButton.GONE
                         }
                     }
                 }
                 .addOnFailureListener { e ->
                     Log.e(ContentValues.TAG, "Error fetching user details: $e")
-                    findViewById<Button>(R.id.group_requests_button).visibility = Button.GONE
+                    findViewById<MaterialButton>(R.id.group_requests_button).visibility = MaterialButton.GONE
+                    findViewById<MaterialButton>(R.id.add_category_button).visibility = MaterialButton.GONE
                 }
         }
     }
@@ -63,5 +79,35 @@ class CategoriesActivity : AppCompatActivity() {
         val intent = Intent(this, GroupsListActivity::class.java)
         intent.putExtra("category", category)
         startActivity(intent)
+    }
+
+    private fun showAddCategoryDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("Add Category")
+
+        val inputLayout = TextInputLayout(this).apply {
+            setPadding(16, 0, 16, 0)
+        }
+
+        val input = TextInputEditText(this).apply {
+            hint = "Category Name"
+        }
+
+        inputLayout.addView(input)
+        builder.setView(inputLayout)
+
+        builder.setPositiveButton("Add") { dialog, _ ->
+            val categoryName = input.text.toString()
+            if (categoryName.isNotEmpty()) {
+                categoryViewModel.addCategory(categoryName)
+            }
+            dialog.dismiss()
+        }
+
+        builder.setNegativeButton("Cancel") { dialog, _ ->
+            dialog.cancel()
+        }
+
+        builder.show()
     }
 }

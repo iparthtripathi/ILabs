@@ -12,9 +12,13 @@ import android.view.View
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.room.InvalidationTracker
+import com.google.android.flexbox.FlexboxLayout
 import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInClient
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions
@@ -31,6 +35,7 @@ import com.pratik.iiits.Models.Post
 import com.pratik.iiits.Role.AdminDashboardActivity
 import com.pratik.iiits.Role.RoleAdapter
 import com.pratik.iiits.Role.RoleRequest
+import com.pratik.iiits.Role.RoleViewModel
 
 import com.pratik.iiits.Role.UserRoleManagementActivity
 import com.pratik.iiits.chatapp.ChatScreen
@@ -58,9 +63,11 @@ class ProfilePage : AppCompatActivity() {
     private lateinit var posts: MutableList<Post>
     private lateinit var adapter: PostsAdapter
     private lateinit var rolesRecyclerView: RecyclerView
-    private lateinit var roleAdapter: RoleAdapter
     private val roleList = mutableListOf<RoleRequest>()
 
+    private val roleViewModel: RoleViewModel by viewModels()
+    private lateinit var roleAdapter: RoleAdapter
+    private lateinit var flexboxLayout: FlexboxLayout
 
 
 
@@ -123,12 +130,14 @@ class ProfilePage : AppCompatActivity() {
         // Initialize Firestore instance
         firestoreDb = FirebaseFirestore.getInstance()
 
-        rolesRecyclerView = findViewById(R.id.rolesRecyclerView)
-        roleAdapter = RoleAdapter(roleList)
-        rolesRecyclerView.adapter = roleAdapter
-        rolesRecyclerView.layoutManager = LinearLayoutManager(this)
+        flexboxLayout = findViewById(R.id.flexbox_layout)
 
-        fetchAssignedRoles()
+        roleViewModel.roles.observe(this, Observer { roles ->
+            roleAdapter = RoleAdapter(this, roles)
+            roleAdapter.addViewsToFlexboxLayout(flexboxLayout)
+        })
+
+//        fetchAssignedRoles()
 
 
         // Fetch user's posts from Firestore
@@ -183,25 +192,25 @@ class ProfilePage : AppCompatActivity() {
             uploadImageToFirebase(filePath)
         }
     }
-    private fun fetchAssignedRoles() {
-        val userId = auth.currentUser?.uid ?: return
-        firestoreDb.collection("roleRequests")
-            .whereEqualTo("userId", userId)
-            .whereEqualTo("status", "approved")
-            .get()
-            .addOnSuccessListener { result ->
-                roleList.clear()
-                for (document in result) {
-                    val role = document.toObject(RoleRequest::class.java)
-                    role.id = document.id
-                    roleList.add(role)
-                }
-                roleAdapter.notifyDataSetChanged()
-            }
-            .addOnFailureListener {
-                Toast.makeText(this, "Failed to fetch assigned roles", Toast.LENGTH_SHORT).show()
-            }
-    }
+//    private fun fetchAssignedRoles() {
+//        val userId = auth.currentUser?.uid ?: return
+//        firestoreDb.collection("roleRequests")
+//            .whereEqualTo("userId", userId)
+//            .whereEqualTo("status", "approved")
+//            .get()
+//            .addOnSuccessListener { result ->
+//                roleList.clear()
+//                for (document in result) {
+//                    val role = document.toObject(RoleRequest::class.java)
+//                    role.id = document.id
+//                    roleList.add(role)
+//                }
+//                roleAdapter.notifyDataSetChanged()
+//            }
+//            .addOnFailureListener {
+//                Toast.makeText(this, "Failed to fetch assigned roles", Toast.LENGTH_SHORT).show()
+//            }
+//    }
 
 
 

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:orientation="vertical"
             android:padding="@dimen/_15sdp"
-            android:background="@color/ivory">
+            android:background="@color/white">
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -104,28 +104,21 @@
                 android:text="gmail@gmail.com"
                 android:textColor="@color/grey"
                 android:textSize="@dimen/_14sdp" />
-            <TextView
-                android:id="@+id/rolesTitle"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_10sdp"
-                android:layout_gravity="center_horizontal"
-                android:text="Roles"
-                android:textSize="@dimen/_18sdp"
-                android:textColor="@color/black"
-                android:fontFamily="@font/poppins_bold" />
-
-
-
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/rolesRecyclerView"
+            <com.google.android.flexbox.FlexboxLayout
+                android:id="@+id/flexbox_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:padding="8dp"
-                android:clipToPadding="false"
-                android:overScrollMode="never"
-                android:orientation="horizontal"
-                />
+                app:flexWrap="wrap"
+                app:justifyContent="flex_start"
+                android:padding="16dp"
+                android:background="@color/white">
+            </com.google.android.flexbox.FlexboxLayout>
+
+
+
+
+
+
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -272,6 +265,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_margin="@dimen/_15sdp"
+                android:visibility="gone"
                 android:backgroundTint="@color/white"
                 tools:layout_editor_absoluteX="1dp"
                 tools:layout_editor_absoluteY="1dp" />

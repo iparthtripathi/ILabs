@@ -45,5 +45,22 @@
     <color name="backgroundDark">#303030</color>
 
 
+    <color name="admin_color">#FF0000</color>
+    <color name="moderator_color">#00FF00</color>
+    <color name="member_color">#0000FF</color>
+    <color name="default_role_color">#CCCCCC</color>
+
+    <!-- Define an array of colors for roles -->
+    <array name="role_colors">
+        <item>#FFAB91</item> <!-- Light Orange -->
+        <item>#90CAF9</item> <!-- Light Blue -->
+        <item>#A5D6A7</item> <!-- Light Green -->
+        <item>#CE93D8</item> <!-- Light Purple -->
+        <item>#FFF59D</item> <!-- Light Yellow -->
+    </array>
+
+    <!-- Define a neutral gray color -->
+    <color name="neutral_gray">#BDBDBD</color>
+
 
 </resources>
