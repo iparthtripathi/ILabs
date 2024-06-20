@@ -3,12 +3,14 @@ package com.pratik.iiits
 
 import android.annotation.SuppressLint
 import android.app.Activity
+import android.content.ContentValues
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.text.Html
 import android.util.Log
 import android.view.View
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -58,11 +60,13 @@ class ProfilePage : AppCompatActivity() {
     lateinit var rolesTextView: TextView
     lateinit var btn1: ImageButton
     lateinit var uri: String
+    private lateinit var role:ImageButton
     private lateinit var googleSignInClient: GoogleSignInClient
     private lateinit var firestoreDb: FirebaseFirestore
     private lateinit var posts: MutableList<Post>
     private lateinit var adapter: PostsAdapter
     private lateinit var rolesRecyclerView: RecyclerView
+    private lateinit var firestore: FirebaseFirestore
     private val roleList = mutableListOf<RoleRequest>()
 
     private val roleViewModel: RoleViewModel by viewModels()
@@ -78,9 +82,11 @@ class ProfilePage : AppCompatActivity() {
 
         // Initialize views
         hook()
+        checkIfAdmin()
 
         // Fetch user ID passed from previous activity or deep link
         authid = intent.getStringExtra("authuid").toString()
+
         val self = intent.getBooleanExtra("self", false)
 
         // Configure Google Sign-In
@@ -174,8 +180,32 @@ class ProfilePage : AppCompatActivity() {
         useremail2 = findViewById(R.id.profileemail2)
         userpost = findViewById(R.id.profilepost)
         bio = findViewById(R.id.statusbio)
-
+        role=findViewById(R.id.role)
+        firestore = FirebaseFirestore.getInstance()
         btn1 = findViewById(R.id.meassgeoredit)
+    }
+
+    private fun checkIfAdmin() {
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val postInIIIT = document.getString("postinIIIT")
+                        Log.e(ContentValues.TAG, postInIIIT.toString())
+                        if (postInIIIT == "Admin") {
+                            role.visibility = Button.VISIBLE
+                        } else {
+                            role.visibility = Button.GONE
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(ContentValues.TAG, "Error fetching user details: $e")
+                    role.visibility = Button.GONE
+                }
+        }
     }
 
     private fun openImagePicker() {

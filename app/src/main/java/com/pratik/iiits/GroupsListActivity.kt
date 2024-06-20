@@ -16,6 +16,7 @@ import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.ListenerRegistration
+import com.google.firebase.firestore.Query
 import com.pratik.iiits.Adapters.GroupsAdapter
 import com.pratik.iiits.Models.Group
 import com.pratik.iiits.Role.UserRoleManagementActivity
@@ -112,7 +113,7 @@ class GroupsListActivity : AppCompatActivity() {
                     if (document != null && document.exists()) {
                         val postInIIIT = document.getString("postinIIIT")
                         Log.e(TAG, postInIIIT.toString())
-                        if (postInIIIT == "Admin"||postInIIIT=="Council") {
+                        if (postInIIIT == "Admin") {
                             createGroupButton.visibility = Button.VISIBLE
                         } else {
                             createGroupButton.visibility = Button.GONE
@@ -149,11 +150,32 @@ class GroupsListActivity : AppCompatActivity() {
                         for (document in snapshots.documents) {
                             val group = document.toObject(Group::class.java)
                             if (group != null) {
-                                if (group.members.contains(currentUser.uid)) {
-                                    yourGroupsList.add(group)
-                                } else {
-                                    availableGroupsList.add(group)
-                                }
+                                // Fetch last message
+                                firestore.collection("groups").document(group.id)
+                                    .collection("messages").orderBy("timestamp", Query.Direction.DESCENDING)
+                                    .limit(1)
+                                    .get()
+                                    .addOnSuccessListener { messageSnapshot ->
+                                        if (!messageSnapshot.isEmpty) {
+                                            val lastMessageDoc = messageSnapshot.documents[0]
+                                            val lastMessage = lastMessageDoc.getString("message") ?: ""
+                                            val truncatedLastMessage = lastMessage.split("\n")[0]
+                                            group.lastMessage = truncatedLastMessage
+                                            group.lastMessageTime = lastMessageDoc.getLong("timestamp") ?: 0L
+                                        }
+
+                                        // Check if the current user has unread messages
+                                        group.unreadMessages[currentUser.uid] = group.lastMessageTime > (document.getLong("lastReadTime_${currentUser.uid}") ?: 0L)
+
+                                        if (group.members.contains(currentUser.uid)) {
+                                            yourGroupsList.add(group)
+                                        } else {
+                                            availableGroupsList.add(group)
+                                        }
+
+                                        yourGroupsAdapter.notifyDataSetChanged()
+                                        availableGroupsAdapter.notifyDataSetChanged()
+                                    }
                             }
                         }
 
@@ -168,6 +190,9 @@ class GroupsListActivity : AppCompatActivity() {
                 }
         }
     }
+
+
+
 
     private fun onGroupItemClick(group: Group) {
         if (yourGroupsList.contains(group)) {

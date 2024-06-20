@@ -157,8 +157,10 @@
                     android:layout_height="wrap_content" />
 
                 <ImageButton
+                    android:id="@+id/role"
                     android:layout_width="@dimen/_37sdp"
                     android:layout_height="@dimen/_37sdp"
+                    android:visibility="gone"
                     android:background="@drawable/profile_btn_grey"
                     android:onClick="admin"
                     android:src="@drawable/ic_group"

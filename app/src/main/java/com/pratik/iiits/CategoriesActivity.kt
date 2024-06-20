@@ -58,10 +58,14 @@ class CategoriesActivity : AppCompatActivity() {
                     if (document != null && document.exists()) {
                         val postInIIIT = document.getString("postinIIIT")
                         Log.e(ContentValues.TAG, postInIIIT.toString())
-                        if (postInIIIT == "Admin" || postInIIIT == "Council") {
+                        if (postInIIIT == "Admin" ) {
                             findViewById<MaterialButton>(R.id.group_requests_button).visibility = MaterialButton.VISIBLE
                             findViewById<MaterialButton>(R.id.add_category_button).visibility = MaterialButton.VISIBLE
-                        } else {
+                        }
+                        else if(postInIIIT == "Council"){
+                            findViewById<MaterialButton>(R.id.group_requests_button).visibility = MaterialButton.VISIBLE
+                            findViewById<MaterialButton>(R.id.add_category_button).visibility = MaterialButton.GONE
+                        }else {
                             findViewById<MaterialButton>(R.id.group_requests_button).visibility = MaterialButton.GONE
                             findViewById<MaterialButton>(R.id.add_category_button).visibility = MaterialButton.GONE
                         }

@@ -1,6 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
-
 <androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -11,7 +9,6 @@
     android:elevation="@dimen/_5sdp">
 
     <LinearLayout
-
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -47,18 +44,26 @@
                 android:textStyle="bold"
                 android:textColor="@android:color/black" />
 
-            <!-- Last Message or Group Info -->
+            <!-- Last Message -->
             <TextView
-                android:id="@+id/group_info"
+                android:id="@+id/last_message"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Last message or group info"
                 android:textSize="14sp"
-                android:visibility="gone"
                 android:textColor="@android:color/darker_gray" />
 
         </LinearLayout>
+
+        <!-- Unread Indicator -->
+        <View
+            android:id="@+id/unread_indicator"
+            android:layout_width="12dp"
+            android:layout_height="12dp"
+            android:layout_marginStart="8dp"
+            android:background="@drawable/unread_indicator_background"
+            android:visibility="gone" />
+
     </LinearLayout>
 
 </androidx.cardview.widget.CardView>
-

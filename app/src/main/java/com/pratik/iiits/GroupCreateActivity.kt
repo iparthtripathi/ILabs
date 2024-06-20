@@ -76,7 +76,7 @@ class GroupCreateActivity : AppCompatActivity() {
 
     private fun createGroup() {
         val groupName = groupNameEditText.text.toString().trim()
-        val category = categorySpinner.selectedItem.toString()
+        val category = intent.getStringExtra("CATEGORY")
         if (groupName.isEmpty()) {
             groupNameEditText.error = "Group name is required"
             groupNameEditText.requestFocus()
@@ -90,23 +90,27 @@ class GroupCreateActivity : AppCompatActivity() {
             val members = selectedUsers.map { it.uid }.toMutableList()
             members.add(adminId) // Add admin to the members list
 
-            val group = Group(
-                id = groupId,
-                name = groupName,
-                admin = adminId,
-                members = members,
-                category = category
-            )
+            val group = category?.let {
+                Group(
+                    id = groupId,
+                    name = groupName,
+                    admin = adminId,
+                    members = members,
+                    category = it
+                )
+            }
 
-            firestore.collection("groups").document(groupId)
-                .set(group)
-                .addOnSuccessListener {
-                    Toast.makeText(this, "Group created successfully", Toast.LENGTH_SHORT).show()
-                    finish()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(this, "Failed to create group: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
+            if (group != null) {
+                firestore.collection("groups").document(groupId)
+                    .set(group)
+                    .addOnSuccessListener {
+                        Toast.makeText(this, "Group created successfully", Toast.LENGTH_SHORT).show()
+                        finish()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(this, "Failed to create group: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
         }
     }
 }
