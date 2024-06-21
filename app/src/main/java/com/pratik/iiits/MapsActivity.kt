@@ -1,25 +1,27 @@
 package com.pratik.iiits
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.widget.ImageButton
 import android.widget.PopupMenu
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
 import com.google.android.gms.maps.SupportMapFragment
-import com.google.android.gms.maps.model.BitmapDescriptorFactory
-import com.google.android.gms.maps.model.CameraPosition
 import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.pratik.iiits.databinding.ActivityMapsBinding
 
 class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
     private lateinit var mMap: GoogleMap
     private lateinit var binding: ActivityMapsBinding
+    private val LOCATION_PERMISSION_REQUEST_CODE = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -56,35 +58,101 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
     override fun onMapReady(googleMap: GoogleMap) {
         mMap = googleMap
 
-        // Define the coordinates for IIIT
-        val iiitCoordinates = LatLng(13.5553, 80.0267)
-
-        // Add a custom marker in IIIT with a title and icon
-        mMap.addMarker(
-            MarkerOptions()
-                .position(iiitCoordinates)
-                .title("IIIT Location")
-                .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_AZURE))
+        // Add markers for each point of interest
+        val pointsOfInterest = listOf(
+            POI("Classroom Building", "Academic block", LatLng(13.5553, 80.0267), "Hours: 8 AM - 6 PM", "Contact: 123-456-7890"),
+            POI("Cafeteria", "Cafeteria", LatLng(13.556308, 80.026451), "Hours: 7 AM - 8 PM", "Contact: 123-456-7892"),
+            POI("Boys Hostel 1", "Boys Hostel 1", LatLng(13.557252, 80.025180), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Boys Hostel 2", "Boys Hostel 2", LatLng(13.556558, 80.025027), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Dining Hall 01", "Dining Hall 1", LatLng(13.556981, 80.024898), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Boys Hostel 3", "Boys Hostel 3", LatLng(13.553578, 80.025984), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Boys Hostel 4", "Boys Hostel 4", LatLng(13.552592, 80.026124), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Dining Hall 02", "Dining Hall 2", LatLng(13.553072, 80.026059), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Petal Park", "Petal Park", LatLng(13.55613, 80.027213), "Hours: 10 AM - 11 PM", "Contact: 123-456-7895")
         )
 
-        // Set the default map type to satellite
-        mMap.mapType = GoogleMap.MAP_TYPE_SATELLITE
+        for (poi in pointsOfInterest) {
+            val markerOptions = MarkerOptions()
+                .position(poi.latLng)
+                .title(poi.shortName)
+                .snippet(poi.info)
 
-        // Move the camera to the IIIT coordinates
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(iiitCoordinates))
+            val marker = mMap.addMarker(markerOptions)
+            marker?.tag = poi
 
-        // Create a CameraPosition with the specified parameters
-        val cameraPosition = CameraPosition.Builder()
-            .target(iiitCoordinates) // Sets the center of the map to IIIT
-            .zoom(17f) // Sets the zoom level
-            .bearing(90f) // Sets the orientation of the camera to east
-            .tilt(30f) // Sets the tilt of the camera to 30 degrees
-            .build() // Creates a CameraPosition from the builder
+            // Log marker details for debugging
+            println("Marker added: ${poi.shortName} at ${poi.latLng}")
+        }
 
-        // Use a Handler to delay the animation slightly
-        Handler(Looper.getMainLooper()).postDelayed({
-            // Animate the camera to the specified camera position
-            mMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition))
-        }, 1000) // Adjust the delay as needed
+        mMap.setOnMarkerClickListener { marker ->
+            marker.showInfoWindow()
+            true
+        }
+
+        mMap.setOnInfoWindowClickListener { marker ->
+            val poi = marker.tag as? POI
+            poi?.let {
+                showPOIDialog(it)
+            }
+        }
+
+        // Move the camera to the first POI
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(pointsOfInterest.first().latLng, 15f))
+
+        // Check for location permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            enableMyLocation()
+        } else {
+            // Request location permission
+            ActivityCompat.requestPermissions(this,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                LOCATION_PERMISSION_REQUEST_CODE)
+        }
     }
+
+    private fun enableMyLocation() {
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+            == PackageManager.PERMISSION_GRANTED) {
+            mMap.isMyLocationEnabled = true
+        } else {
+            // Permission to access the location is missing. Show rationale and request permission
+            MaterialAlertDialogBuilder(this)
+                .setTitle("Location Permission")
+                .setMessage("This app needs location access to show your current location on the map.")
+                .setPositiveButton("OK") { _, _ ->
+                    ActivityCompat.requestPermissions(this,
+                        arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
+                        LOCATION_PERMISSION_REQUEST_CODE)
+                }
+                .setNegativeButton("Cancel", null)
+                .show()
+        }
+    }
+
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            LOCATION_PERMISSION_REQUEST_CODE -> {
+                if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                    enableMyLocation()
+                } else {
+                    // Permission denied
+                    MaterialAlertDialogBuilder(this)
+                        .setTitle("Location Permission Denied")
+                        .setMessage("The app needs location permission to function properly.")
+                        .setPositiveButton("OK", null)
+                        .show()
+                }
+                return
+            }
+        }
+    }
+
+    private fun showPOIDialog(poi: POI) {
+        val dialogFragment = POIInfoDialogFragment.newInstance(poi.name, poi.info, poi.contact)
+        dialogFragment.show(supportFragmentManager, "POIInfoDialog")
+    }
+
+    data class POI(val name: String, val shortName: String, val latLng: LatLng, val info: String, val contact: String)
 }

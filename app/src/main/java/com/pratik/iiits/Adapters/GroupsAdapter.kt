@@ -10,6 +10,7 @@ import com.bumptech.glide.Glide
 import com.google.firebase.auth.FirebaseAuth
 import com.pratik.iiits.Models.Group
 import com.pratik.iiits.R
+import kotlin.random.Random
 
 class GroupsAdapter(
     private val groupsList: List<Group>,
@@ -17,6 +18,18 @@ class GroupsAdapter(
     private val onItemLongClick: (Group) -> Unit,
     private val isYourGroupsList: Boolean
 ) : RecyclerView.Adapter<GroupsAdapter.GroupViewHolder>() {
+
+    private val drawableImages = arrayOf(
+        R.drawable.img_3,
+        R.drawable.img_4,
+        R.drawable.img_5,
+        R.drawable.img_6,
+        R.drawable.img_7,
+        R.drawable.img_8,
+        R.drawable.img_9,
+        R.drawable.img_10,
+        R.drawable.img_11// Add as many images as you need
+    )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.item_group, parent, false)
@@ -41,8 +54,9 @@ class GroupsAdapter(
             lastMessage.text = group.lastMessage
 
             // Load group profile image
+            val randomImage = drawableImages[Random.nextInt(drawableImages.size)]
             Glide.with(itemView.context)
-                .load(R.drawable.img5) // assuming 'profileImageUrl' is a field in your Group model
+                .load(randomImage) // assuming 'profileImageUrl' is a field in your Group model
                 .placeholder(R.drawable.placeholder_image) // placeholder image
                 .into(groupProfileImage)
 

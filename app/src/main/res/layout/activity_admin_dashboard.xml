@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:padding="16dp"
     android:background="@android:color/white">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -14,72 +15,50 @@
         android:fontFamily="@font/poppins_bold"
         android:textColor="@color/black"/>
 
-    <!-- Group Name Input -->
-    <com.google.android.material.textfield.TextInputLayout
+    <!-- Group Spinner -->
+    <Spinner
+        android:id="@+id/group_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Group Name"
-        android:background="@color/gray">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:prompt="@string/select_ug_program"
+        android:background="@color/white"
 
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/group_name_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/gray"
-            android:backgroundTint="@color/gray"/>
-    </com.google.android.material.textfield.TextInputLayout>
+        android:popupBackground="@android:color/black" />
 
-    <!-- Create Group Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_group_button"
+
+    <!-- Subgroup Spinner -->
+    <Spinner
+        android:id="@+id/subgroup_spinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Create Group"
-        app:backgroundTint="@color/coral"
-        android:textColor="@android:color/white" />
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="12dp"
+        android:prompt="@string/select"
+        android:background="@color/white"
+        android:popupBackground="@android:color/black" />
 
-    <!-- Subgroup Name Input -->
-    <com.google.android.material.textfield.TextInputLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:hint="Subgroup Name"
-        android:background="@color/gray">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/subgroup_name_edit_text"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/gray"
-            android:backgroundTint="@color/gray"/>
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <!-- Create Subgroup Button -->
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/create_subgroup_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:text="Create Subgroup"
-        app:backgroundTint="@color/coral"
-        android:textColor="@android:color/white" />
 
     <!-- Subsubgroup Name Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:hint="Subsubgroup Name"
-        android:background="@color/gray">
-
+        android:hint="Role Name"
+        android:textColorHint="@color/black"
+        app:hintTextColor="@color/black"
+        >
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/subsubgroup_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/gray"
-            android:backgroundTint="@color/gray"/>
+            android:textColor="@color/black"
+            android:background="@color/white"/>
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Create Subsubgroup Button -->
@@ -88,9 +67,10 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginBottom="16dp"
-        android:text="Create Subsubgroup"
+        android:text="Create Role"
         app:backgroundTint="@color/coral"
         android:textColor="@android:color/white" />
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -104,5 +84,5 @@
         android:id="@+id/role_requests_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp" />
+        android:layout_marginTop="16dp"/>
 </LinearLayout>
