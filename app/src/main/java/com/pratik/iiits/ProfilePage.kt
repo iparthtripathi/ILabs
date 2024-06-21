@@ -12,6 +12,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Space
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -128,7 +129,7 @@ class ProfilePage : AppCompatActivity() {
 
         // Set up RecyclerView for posts
         posts = mutableListOf()
-        adapter = PostsAdapter(this, posts)
+        adapter = PostsAdapter(this, posts,"Admin")
         val rvPosts = findViewById<RecyclerView>(R.id.rvPosts)
         rvPosts.adapter = adapter
         rvPosts.layoutManager = LinearLayoutManager(this)
@@ -196,14 +197,17 @@ class ProfilePage : AppCompatActivity() {
                         Log.e(ContentValues.TAG, postInIIIT.toString())
                         if (postInIIIT == "Admin") {
                             role.visibility = Button.VISIBLE
+                            findViewById<Space>(R.id.roleSpace).visibility=Button.VISIBLE
                         } else {
                             role.visibility = Button.GONE
+                            findViewById<Space>(R.id.roleSpace).visibility=Button.GONE
                         }
                     }
                 }
                 .addOnFailureListener { e ->
                     Log.e(ContentValues.TAG, "Error fetching user details: $e")
                     role.visibility = Button.GONE
+                    findViewById<Space>(R.id.roleSpace).visibility=Button.GONE
                 }
         }
     }

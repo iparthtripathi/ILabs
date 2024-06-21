@@ -34,18 +34,23 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginBottom="8dp"
                 android:hint="Select Group"
+                android:visibility="gone"
                 app:endIconMode="dropdown_menu"
                 app:boxStrokeColor="@android:color/black"
-                app:hintTextColor="@color/black">
+                app:hintTextColor="@color/black"
+                android:background="@color/gray">
 
                 <AutoCompleteTextView
                     android:id="@+id/group_spinner"
                     android:layout_width="match_parent"
                     android:layout_height="@dimen/_50sdp"
+                    android:background="@color/gray"
                     android:inputType="none"
                     android:padding="12dp"
                     android:popupBackground="@android:color/white"
-                    android:textColor="@android:color/black"/>
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@color/gray"
+                    android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -54,9 +59,11 @@
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginBottom="8dp"
                 android:hint="Select SubGroup"
+                android:visibility="gone"
                 app:endIconMode="dropdown_menu"
                 app:boxStrokeColor="@android:color/black"
-                app:hintTextColor="@color/black">
+                app:hintTextColor="@color/black"
+                android:background="@color/gray">
 
                 <AutoCompleteTextView
                     android:id="@+id/subgroup_spinner"
@@ -64,8 +71,11 @@
                     android:layout_height="@dimen/_50sdp"
                     android:inputType="none"
                     android:padding="12dp"
+                    android:background="@color/gray"
                     android:popupBackground="@android:color/white"
-                    android:textColor="@android:color/black"/>
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@color/gray"
+                    android:enabled="false"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <com.google.android.material.textfield.TextInputLayout
@@ -73,10 +83,11 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginBottom="8dp"
-                android:hint="Select Subsubgroup"
+                android:hint="Roles"
                 app:endIconMode="dropdown_menu"
                 app:boxStrokeColor="@android:color/black"
-                app:hintTextColor="@color/black">
+                app:hintTextColor="@color/black"
+                android:background="@color/gray">
 
                 <AutoCompleteTextView
                     android:id="@+id/subsubgroup_spinner"
@@ -84,8 +95,10 @@
                     android:layout_height="@dimen/_50sdp"
                     android:inputType="none"
                     android:padding="12dp"
+                    android:background="@color/gray"
                     android:popupBackground="@android:color/white"
-                    android:textColor="@android:color/black"/>
+                    android:textColor="@android:color/black"
+                    android:backgroundTint="@color/gray"/>
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button

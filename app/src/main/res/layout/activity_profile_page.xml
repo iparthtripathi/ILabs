@@ -149,12 +149,10 @@
                     android:layout_height="@dimen/_37sdp"
                     android:background="@drawable/profile_btn_grey"
                     android:onClick="userrole"
+                    android:visibility="gone"
                     android:src="@drawable/ic_subgroup"
                     android:contentDescription="Mail" />
 
-                <Space
-                    android:layout_width="@dimen/_10sdp"
-                    android:layout_height="wrap_content" />
 
                 <ImageButton
                     android:id="@+id/role"
@@ -166,11 +164,14 @@
                     android:src="@drawable/ic_group"
                     android:contentDescription="Mail" />
 
-
-
                 <Space
                     android:layout_width="@dimen/_10sdp"
+                    android:id="@+id/roleSpace"
                     android:layout_height="wrap_content" />
+
+
+
+
 
                 <ImageButton
                     android:layout_width="@dimen/_37sdp"

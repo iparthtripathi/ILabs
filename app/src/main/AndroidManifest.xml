@@ -21,6 +21,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".Role.groupRoleManagementActivity"
+            android:exported="false" />
+        <activity
             android:name=".GroupRequestsActivity"
             android:exported="false" />
         <activity
@@ -81,9 +84,11 @@
         <activity
             android:name=".EventsActivity"
             android:exported="false" />
-        <activity android:name=".Role.AdminDashboardActivity"
+        <activity
+            android:name=".Role.AdminDashboardActivity"
             android:exported="false" />
-        <activity android:name=".Role.UserRoleManagementActivity"
+        <activity
+            android:name=".Role.UserRoleManagementActivity"
             android:exported="false" />
         <activity
             android:name=".MapsActivity"

@@ -49,6 +49,9 @@
     <color name="moderator_color">#00FF00</color>
     <color name="member_color">#0000FF</color>
     <color name="default_role_color">#CCCCCC</color>
+    <color name="gradient_start">#00000000</color> <!-- Transparent -->
+    <color name="gradient_end">#80000000</color> <!-- Semi-transparent black -->
+    <color name="background_color">#F5F5F5</color>
 
     <!-- Define an array of colors for roles -->
     <array name="role_colors">

@@ -16,6 +16,9 @@
     <string name="Developer">Pratik Agrawal</string>
     <string name="Exit_from_chats">Are you sure want\n Log Out?</string>
     <string name="title_activity_create_post">createPost</string>
+    <string name="post_image">Post Image</string>
+    <string name="user_image">User Image</string>
+    <string name="more_options">More Options</string>
 
     <string-array name="categories_array">
         <item>Sports</item>

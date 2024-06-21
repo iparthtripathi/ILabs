@@ -1,7 +1,6 @@
 package com.pratik.iiits
 
 import android.content.ContentValues.TAG
-import android.content.DialogInterface
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
@@ -19,7 +18,8 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.pratik.iiits.Adapters.GroupsAdapter
 import com.pratik.iiits.Models.Group
-import com.pratik.iiits.Role.UserRoleManagementActivity
+
+import com.pratik.iiits.Role.groupRoleManagementActivity
 
 class GroupsListActivity : AppCompatActivity() {
     private lateinit var createGroupButton: Button
@@ -52,7 +52,7 @@ class GroupsListActivity : AppCompatActivity() {
         availableGroupsRecyclerView.adapter = availableGroupsAdapter
 
         category = intent.getStringExtra("category")
-        findViewById<TextView>(R.id.categoryName).text=category.toString()
+        findViewById<TextView>(R.id.categoryName).text = category.toString()
         Log.d(TAG, "Category received: $category")
 
         createGroupButton.setOnClickListener {
@@ -82,6 +82,7 @@ class GroupsListActivity : AppCompatActivity() {
                 }
         }
     }
+
     private fun showDeleteConfirmationDialog(group: Group) {
         AlertDialog.Builder(this)
             .setTitle("Delete Group")
@@ -191,9 +192,6 @@ class GroupsListActivity : AppCompatActivity() {
         }
     }
 
-
-
-
     private fun onGroupItemClick(group: Group) {
         if (yourGroupsList.contains(group)) {
             openGroupChat(group)
@@ -211,25 +209,22 @@ class GroupsListActivity : AppCompatActivity() {
     private fun showRequestDialog(group: Group) {
         val dialogBuilder = BottomSheetDialog(this, R.style.BottomSheetStyle)
         dialogBuilder.setContentView(R.layout.request_dialog)
-            dialogBuilder.show()
-                val yes=dialogBuilder.findViewById<TextView>(R.id.yesbtn)
-                val no=dialogBuilder.findViewById<TextView>(R.id.nobtn)
-                val requestTitle=dialogBuilder.findViewById<TextView>(R.id.requestTitle)
+        dialogBuilder.show()
+        val yes = dialogBuilder.findViewById<TextView>(R.id.yesbtn)
+        val no = dialogBuilder.findViewById<TextView>(R.id.nobtn)
+        val requestTitle = dialogBuilder.findViewById<TextView>(R.id.requestTitle)
         requestTitle?.text = "Do you want to send a request to join ${group.name}?"
-        if (no != null) {
-            if (yes != null) {
-                yes.setOnClickListener {
-                    requestToJoinGroup(group)
-                    val intent = Intent(this, UserRoleManagementActivity::class.java)
-                    startActivity(intent)
-                    dialogBuilder.dismiss()
-                }
-                no.setOnClickListener {
-                    dialogBuilder.dismiss()
-                }
-            }
+        yes?.setOnClickListener {
+            requestToJoinGroup(group)
+            val intent = Intent(this, groupRoleManagementActivity::class.java)
+            intent.putExtra("selectedGroup", category)
+            intent.putExtra("selectedSubgroup", group.name)
+            startActivity(intent)
+            dialogBuilder.dismiss()
         }
-
+        no?.setOnClickListener {
+            dialogBuilder.dismiss()
+        }
     }
 
     private fun requestToJoinGroup(group: Group) {

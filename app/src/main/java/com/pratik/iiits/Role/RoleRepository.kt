@@ -25,6 +25,7 @@ class RoleRepository {
         return try {
             val snapshot = firestore.collection("roleRequests")
                 .whereEqualTo("userId", currentUserUid)
+                .whereEqualTo("status", "approved")
                 .get()
                 .await()
             snapshot.toObjects(RoleRequest::class.java)

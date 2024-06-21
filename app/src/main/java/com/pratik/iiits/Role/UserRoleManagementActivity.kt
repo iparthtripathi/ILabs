@@ -7,7 +7,6 @@ import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
 import android.widget.Button
 import android.widget.Toast
-import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -29,17 +28,10 @@ class UserRoleManagementActivity : AppCompatActivity() {
         val subgroupSpinner: AutoCompleteTextView = findViewById(R.id.subgroup_spinner)
         val subsubgroupSpinner: AutoCompleteTextView = findViewById(R.id.subsubgroup_spinner)
 
-        val groups = listOf("Group 1", "Group 2", "Group 3")
-        val subgroups = listOf("Subgroup 1", "Subgroup 2", "Subgroup 3")
-        val subsubgroups = listOf("Subsubgroup 1", "Subsubgroup 2", "Subsubgroup 3")
-
-        val groupAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, groups)
-        val subgroupAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, subgroups)
-        val subsubgroupAdapter = ArrayAdapter(this, android.R.layout.simple_dropdown_item_1line, subsubgroups)
-
-        groupSpinner.setAdapter(groupAdapter)
-        subgroupSpinner.setAdapter(subgroupAdapter)
-        subsubgroupSpinner.setAdapter(subsubgroupAdapter)
+        // Set empty adapters initially
+        groupSpinner.setAdapter(ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, listOf()))
+        subgroupSpinner.setAdapter(ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, listOf()))
+        subsubgroupSpinner.setAdapter(ArrayAdapter<String>(this, android.R.layout.simple_dropdown_item_1line, listOf()))
 
         setSpinnerOnItemClickListener(groupSpinner, findViewById(R.id.group_text_input_layout))
         setSpinnerOnItemClickListener(subgroupSpinner, findViewById(R.id.subgroup_text_input_layout))
@@ -47,10 +39,10 @@ class UserRoleManagementActivity : AppCompatActivity() {
         val requestButton = findViewById<Button>(R.id.request_button)
 
         // Populate group spinner from Firestore
-        db.collection("roles").whereEqualTo("level", "group").get().addOnSuccessListener { result ->
-            val groups = result.map { it.getString("name") ?: "" }
-            val adapter = ArrayAdapter(this, R.layout.dropdown_item, groups)
-            groupSpinner.setAdapter(adapter)
+        db.collection("roles").get().addOnSuccessListener { result ->
+            val groups = result.map { it.id }
+            val groupAdapter = ArrayAdapter(this, R.layout.dropdown_item, groups)
+            groupSpinner.setAdapter(groupAdapter)
             // Log the data for debugging
             println("Groups loaded: $groups")
         }
@@ -59,9 +51,9 @@ class UserRoleManagementActivity : AppCompatActivity() {
         groupSpinner.setOnItemClickListener { parent, view, position, id ->
             val selectedGroup = groupSpinner.text.toString()
             db.collection("roles").document(selectedGroup).collection("subgroups").get().addOnSuccessListener { result ->
-                val subgroups = result.map { it.getString("name") ?: "" }
-                val adapter = ArrayAdapter(this@UserRoleManagementActivity, R.layout.dropdown_item, subgroups)
-                subgroupSpinner.setAdapter(adapter)
+                val subgroups = result.map { it.id }
+                val subgroupAdapter = ArrayAdapter(this@UserRoleManagementActivity, R.layout.dropdown_item, subgroups)
+                subgroupSpinner.setAdapter(subgroupAdapter)
                 // Log the data for debugging
                 println("Subgroups loaded: $subgroups for group: $selectedGroup")
             }
@@ -69,11 +61,12 @@ class UserRoleManagementActivity : AppCompatActivity() {
 
         // Populate subsubgroup spinner based on selected subgroup
         subgroupSpinner.setOnItemClickListener { parent, view, position, id ->
+            val selectedGroup = groupSpinner.text.toString()
             val selectedSubgroup = subgroupSpinner.text.toString()
-            db.collection("roles").document(groupSpinner.text.toString()).collection("subgroups").document(selectedSubgroup).collection("subsubgroups").get().addOnSuccessListener { result ->
-                val subsubgroups = result.map { it.getString("name") ?: "" }
-                val adapter = ArrayAdapter(this@UserRoleManagementActivity, R.layout.dropdown_item, subsubgroups)
-                subsubgroupSpinner.setAdapter(adapter)
+            db.collection("roles").document(selectedGroup).collection("subgroups").document(selectedSubgroup).collection("subsubgroups").get().addOnSuccessListener { result ->
+                val subsubgroups = result.map { it.id }
+                val subsubgroupAdapter = ArrayAdapter(this@UserRoleManagementActivity, R.layout.dropdown_item, subsubgroups)
+                subsubgroupSpinner.setAdapter(subsubgroupAdapter)
                 // Log the data for debugging
                 println("Subsubgroups loaded: $subsubgroups for subgroup: $selectedSubgroup")
             }
@@ -87,6 +80,7 @@ class UserRoleManagementActivity : AppCompatActivity() {
             sendRoleRequest(selectedRole)
         }
     }
+
     private fun setSpinnerOnItemClickListener(spinner: AutoCompleteTextView, textInputLayout: TextInputLayout) {
         spinner.setOnItemClickListener { _, _, _, _ ->
             textInputLayout.hint = textInputLayout.hint.toString() // Reset hint to trigger it to move up
