@@ -28,7 +28,7 @@ class GroupsAdapter(
         R.drawable.img_8,
         R.drawable.img_9,
         R.drawable.img_10,
-        R.drawable.img_11// Add as many images as you need
+        R.drawable.img_11 // Add as many images as you need
     )
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): GroupViewHolder {
@@ -51,14 +51,28 @@ class GroupsAdapter(
 
         fun bind(group: Group) {
             groupName.text = group.name
-            lastMessage.text = group.lastMessage
+
+            // Check if the group is part of your groups list
+            if (isYourGroupsList) {
+                lastMessage.visibility = View.VISIBLE
+                lastMessage.text = group.lastMessage
+            } else {
+                lastMessage.visibility = View.GONE
+            }
 
             // Load group profile image
-            val randomImage = drawableImages[Random.nextInt(drawableImages.size)]
-            Glide.with(itemView.context)
-                .load(randomImage) // assuming 'profileImageUrl' is a field in your Group model
-                .placeholder(R.drawable.placeholder_image) // placeholder image
-                .into(groupProfileImage)
+            if (!group.groupImageUrl.isNullOrEmpty()) {
+                Glide.with(itemView.context)
+                    .load(group.groupImageUrl) // Use the specific image URL
+                    .placeholder(R.drawable.placeholder_image) // Placeholder image
+                    .into(groupProfileImage)
+            } else {
+                val randomImage = drawableImages[Random.nextInt(drawableImages.size)]
+                Glide.with(itemView.context)
+                    .load(randomImage) // Load a random image
+                    .placeholder(R.drawable.placeholder_image) // Placeholder image
+                    .into(groupProfileImage)
+            }
 
             // Check for unread messages
             val currentUser = FirebaseAuth.getInstance().currentUser

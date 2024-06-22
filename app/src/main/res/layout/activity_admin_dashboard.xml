@@ -13,7 +13,7 @@
         android:text="Create a Role"
         android:textSize="@dimen/_20sdp"
         android:fontFamily="@font/poppins_bold"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black" />
 
     <!-- Group Spinner -->
     <Spinner
@@ -26,9 +26,7 @@
         android:paddingBottom="12dp"
         android:prompt="@string/select_ug_program"
         android:background="@color/white"
-
         android:popupBackground="@android:color/black" />
-
 
     <!-- Subgroup Spinner -->
     <Spinner
@@ -43,7 +41,6 @@
         android:background="@color/white"
         android:popupBackground="@android:color/black" />
 
-
     <!-- Subsubgroup Name Input -->
     <com.google.android.material.textfield.TextInputLayout
         android:layout_width="match_parent"
@@ -51,14 +48,15 @@
         android:layout_marginBottom="16dp"
         android:hint="Role Name"
         android:textColorHint="@color/black"
-        app:hintTextColor="@color/black"
-        >
+        app:endIconMode="clear_text"
+        app:hintTextColor="@color/black">
+
         <com.google.android.material.textfield.TextInputEditText
             android:id="@+id/subsubgroup_name_edit_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textColor="@color/black"
-            android:background="@color/white"/>
+            android:background="@color/white" />
     </com.google.android.material.textfield.TextInputLayout>
 
     <!-- Create Subsubgroup Button -->
@@ -77,12 +75,12 @@
         android:text="Requests"
         android:textSize="@dimen/_20sdp"
         android:fontFamily="@font/poppins_bold"
-        android:textColor="@color/black"/>
+        android:textColor="@color/black" />
 
     <!-- Role Requests List -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/role_requests_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"/>
+        android:layout_marginTop="16dp" />
 </LinearLayout>

@@ -77,9 +77,16 @@ class AdminDashboardActivity : AppCompatActivity() {
     // Fetch and populate categories in the first spinner
     private fun fetchGroups() {
         db.collection("groups").get().addOnSuccessListener { result ->
-            groupList = result.documents.mapNotNull { it.getString("category") }
-            val groupAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, groupList)
-            groupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            val uniqueGroups = mutableSetOf<String>()
+            for (document in result.documents) {
+                val category = document.getString("category")
+                if (category != null) {
+                    uniqueGroups.add(category)
+                }
+            }
+            groupList = uniqueGroups.toList()
+            val groupAdapter = ArrayAdapter(this, R.layout.spinner_item, groupList)
+            groupAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
             groupSpinner.adapter = groupAdapter
         }.addOnFailureListener {
             Toast.makeText(this, "Failed to fetch groups", Toast.LENGTH_SHORT).show()
@@ -87,33 +94,30 @@ class AdminDashboardActivity : AppCompatActivity() {
     }
 
 
-
     private fun fetchSubgroups(groupName: String) {
         db.collection("groups")
             .whereEqualTo("category", groupName)
             .get()
             .addOnSuccessListener { result ->
-                if (result.isEmpty) {
-                    Toast.makeText(this, "No subgroups found", Toast.LENGTH_SHORT).show()
-                    return@addOnSuccessListener
-                }
-
-                val subgroups = mutableListOf<String>()
+                val uniqueSubgroups = mutableSetOf<String>()
                 for (document in result.documents) {
                     val subgroupName = document.getString("name")
                     if (subgroupName != null) {
-                        subgroups.add(subgroupName)
+                        uniqueSubgroups.add(subgroupName)
                     }
                 }
-
-                val subgroupAdapter = ArrayAdapter(this, android.R.layout.simple_spinner_item, subgroups)
-                subgroupAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                subgroupList = uniqueSubgroups.toList()
+                val subgroupAdapter = ArrayAdapter(this, R.layout.spinner_item, subgroupList)
+                subgroupAdapter.setDropDownViewResource(R.layout.spinner_dropdown_item)
                 subgroupSpinner.adapter = subgroupAdapter
             }
             .addOnFailureListener {
                 Toast.makeText(this, "Failed to fetch subgroups", Toast.LENGTH_SHORT).show()
             }
     }
+
+
+
 
 
     private fun createSubsubgroup(groupName: String, subgroupName: String, subsubgroupName: String) {

@@ -196,7 +196,11 @@ class GroupsListActivity : AppCompatActivity() {
         if (yourGroupsList.contains(group)) {
             openGroupChat(group)
         } else {
-            showRequestDialog(group)
+            requestToJoinGroup(group)
+            val intent = Intent(this, groupRoleManagementActivity::class.java)
+            intent.putExtra("selectedGroup", category)
+            intent.putExtra("selectedSubgroup", group.name)
+            startActivity(intent)
         }
     }
 
