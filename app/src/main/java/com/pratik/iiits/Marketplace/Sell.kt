@@ -3,9 +3,11 @@ package com.pratik.iiits.Marketplace
 import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
+import android.graphics.Bitmap
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.widget.Button
 import android.widget.EditText
@@ -181,11 +183,14 @@ class Sell : AppCompatActivity() {
         imagesPreviewContainer.removeAllViews()
         imageUris.forEach { uri ->
             val imageView = ImageView(this)
-            imageView.setImageURI(uri)
+            val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, uri)
+            val scaledBitmap = Bitmap.createScaledBitmap(bitmap, 200, 200, false)
+            imageView.setImageBitmap(scaledBitmap)
             val layoutParams = LinearLayout.LayoutParams(200, 200) // Set appropriate size
             layoutParams.setMargins(8, 8, 8, 8)
             imageView.layoutParams = layoutParams
             imagesPreviewContainer.addView(imageView)
         }
     }
+
 }

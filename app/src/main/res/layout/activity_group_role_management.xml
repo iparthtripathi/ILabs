@@ -9,7 +9,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Add a Role"
+        android:text="Your Interests"
         android:textSize="@dimen/_20sdp"
         android:fontFamily="@font/poppins_bold"
         android:textColor="@color/black"/>
@@ -83,7 +83,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="@dimen/_50sdp"
                 android:layout_marginBottom="8dp"
-                android:hint="Roles"
+                android:hint="Your Interest"
                 app:endIconMode="dropdown_menu"
                 app:boxStrokeColor="@android:color/black"
                 app:hintTextColor="@color/black"
@@ -105,7 +105,7 @@
                 android:id="@+id/request_button"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="REQUEST ROLE"
+                android:text="REQUEST TO JOIN"
                 android:backgroundTint="@color/coral"
                 android:textColor="@android:color/white"
                 android:fontFamily="@font/spartan_bold"
