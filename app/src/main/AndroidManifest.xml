@@ -27,6 +27,12 @@
             android:name=".GroupRequestsActivity"
             android:exported="false" />
         <activity
+            android:name=".Timetable.ScheduleActivity"
+            android:exported="false" />
+        <activity
+            android:name=".Timetable.Adminentry"
+            android:exported="false"/>
+        <activity
             android:name=".CategoriesActivity"
             android:exported="false" />
         <activity

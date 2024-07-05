@@ -21,6 +21,7 @@ import java.util.Calendar
 
 import android.view.animation.AnimationUtils
 import android.widget.RelativeLayout
+import com.pratik.iiits.Timetable.ScheduleActivity
 
 class MainActivity : AppCompatActivity() {
     private var mAuth: FirebaseAuth? = null
@@ -77,7 +78,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun openCalender(view: View) {
-        startActivity(Intent(this@MainActivity, Calender::class.java))
+        startActivity(Intent(this@MainActivity, ScheduleActivity::class.java))
     }
 
     fun opennotesactivity(view: View?) {

@@ -60,11 +60,11 @@ class MapsActivity : AppCompatActivity(), OnMapReadyCallback {
 
         // Add markers for each point of interest
         val pointsOfInterest = listOf(
-            POI("Classroom Building", "Academic block", LatLng(13.5553, 80.0267), "Hours: 8 AM - 6 PM", "Contact: 123-456-7890"),
-            POI("Cafeteria", "Cafeteria", LatLng(13.556308, 80.026451), "Hours: 7 AM - 8 PM", "Contact: 123-456-7892"),
-            POI("Boys Hostel 1", "Boys Hostel 1", LatLng(13.557252, 80.025180), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
-            POI("Boys Hostel 2", "Boys Hostel 2", LatLng(13.556558, 80.025027), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
-            POI("Dining Hall 01", "Dining Hall 1", LatLng(13.556981, 80.024898), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Classroom Building", "Academic block", LatLng(13.555537351159236, 80.02665122939517), "Hours: 8 AM - 6 PM", "Contact: 123-456-7890"),
+            POI("Cafeteria", "Cafeteria", LatLng(13.5562876468723, 80.02639170510895), "Hours: 7 AM - 8 PM", "Contact: 123-456-7892"),
+            POI("Boys Hostel 1", "Boys Hostel 1", LatLng(13.557135049996454, 80.02517515846479), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Boys Hostel 2", "Boys Hostel 2", LatLng(13.55682546801932, 80.02504320507725), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
+            POI("Dining Hall 01", "Dining Hall 1", LatLng(13.5569065045269, 80.02514745657533), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
             POI("Boys Hostel 3", "Boys Hostel 3", LatLng(13.553578, 80.025984), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
             POI("Boys Hostel 4", "Boys Hostel 4", LatLng(13.552592, 80.026124), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
             POI("Dining Hall 02", "Dining Hall 2", LatLng(13.553072, 80.026059), "Hours: 6 AM - 9 PM", "Contact: 123-456-7893"),
