@@ -6,7 +6,14 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.widget.*
+import android.view.View
+import android.widget.Button
+import android.widget.EditText
+import android.widget.ImageButton
+import android.widget.ImageView
+import android.widget.ProgressBar
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,6 +26,7 @@ import com.pratik.iiits.Models.Group
 import com.pratik.iiits.Models.Message
 import com.pratik.iiits.Models.UserModel
 
+
 class GroupChat : AppCompatActivity() {
     private lateinit var messagesRecyclerView: RecyclerView
     private lateinit var groupNameTextView: TextView
@@ -30,6 +38,7 @@ class GroupChat : AppCompatActivity() {
     private lateinit var firestore: FirebaseFirestore
     private lateinit var storage: FirebaseStorage
     private lateinit var groupId: String
+    private var progressBar: ProgressBar? = null
 
     private lateinit var messagesAdapter: MessagesAdapter
     private val messagesList = ArrayList<Message>()
@@ -52,6 +61,7 @@ class GroupChat : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         exitGroupButton = findViewById(R.id.exit_group_button)
+        progressBar = findViewById(R.id.progressBar);
 
         groupId = intent.getStringExtra("groupId")!!
 
@@ -179,11 +189,13 @@ class GroupChat : AppCompatActivity() {
     private fun sendImage(imageUri: Uri) {
         val currentUser = auth.currentUser
         if (currentUser != null) {
+            progressBar?.visibility = View.VISIBLE
             val storageRef = storage.reference.child("group_images/${System.currentTimeMillis()}.jpg")
             storageRef.putFile(imageUri)
                 .addOnSuccessListener {
                     storageRef.downloadUrl.addOnSuccessListener { uri ->
                         val imageUrl = uri.toString()
+                        progressBar?.visibility = View.GONE
                         val message = Message(
                             senderId = currentUser.uid,
                             imageUrl = imageUrl,
@@ -197,7 +209,14 @@ class GroupChat : AppCompatActivity() {
                     }
                 }
                 .addOnFailureListener {
+                    progressBar?.visibility = View.GONE
                     Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
+                }
+                .addOnProgressListener {
+
+                    val progress: Double =
+                        (100.0 * it.getBytesTransferred() / it.getTotalByteCount())
+                    progressBar!!.progress = progress.toInt()
                 }
         }
     }

@@ -77,7 +77,7 @@ class GroupsAdapter(
             // Check for unread messages
             val currentUser = FirebaseAuth.getInstance().currentUser
             if (currentUser != null && group.unreadMessages[currentUser.uid] == true) {
-                unreadIndicator.visibility = View.VISIBLE
+                unreadIndicator.visibility = View.GONE
             } else {
                 unreadIndicator.visibility = View.GONE
             }

@@ -35,8 +35,15 @@ class CategoriesActivity : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         checkIfAdmin()
 
+        val colors = listOf(
+            getColor(R.color.colorItem1),
+            getColor(R.color.colorItem2),
+            getColor(R.color.colorItem3),
+            getColor(R.color.colorItem4)
+        )
+
         categoryViewModel.categories.observe(this, Observer { categories ->
-            categoriesRecyclerView.adapter = CategoryAdapter(categories, ::openCategory)
+            categoriesRecyclerView.adapter = CategoryAdapter(categories, colors, ::openCategory)
         })
 
         findViewById<MaterialButton>(R.id.group_requests_button).setOnClickListener {

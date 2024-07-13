@@ -18,7 +18,6 @@ import com.google.firebase.firestore.ListenerRegistration
 import com.google.firebase.firestore.Query
 import com.pratik.iiits.Adapters.GroupsAdapter
 import com.pratik.iiits.Models.Group
-
 import com.pratik.iiits.Role.groupRoleManagementActivity
 
 class GroupsListActivity : AppCompatActivity() {
@@ -44,8 +43,8 @@ class GroupsListActivity : AppCompatActivity() {
         auth = FirebaseAuth.getInstance()
         firestore = FirebaseFirestore.getInstance()
 
-        yourGroupsAdapter = GroupsAdapter(yourGroupsList, ::onGroupItemClick, ::onGroupItemLongClick, true) // Pass long click handler for your groups
-        availableGroupsAdapter = GroupsAdapter(availableGroupsList, ::onGroupItemClick, {}, false) // No long click handler for available groups
+        yourGroupsAdapter = GroupsAdapter(yourGroupsList, ::onGroupItemClick, ::onGroupItemLongClick, true)
+        availableGroupsAdapter = GroupsAdapter(availableGroupsList, ::onGroupItemClick, {}, false)
         yourGroupsRecyclerView.layoutManager = LinearLayoutManager(this)
         availableGroupsRecyclerView.layoutManager = LinearLayoutManager(this)
         yourGroupsRecyclerView.adapter = yourGroupsAdapter
@@ -66,7 +65,6 @@ class GroupsListActivity : AppCompatActivity() {
     }
 
     private fun onGroupItemLongClick(group: Group) {
-        // Check if the current user is an admin
         val currentUser = auth.currentUser
         if (currentUser != null) {
             firestore.collection("users").document(currentUser.uid).get()
@@ -116,8 +114,10 @@ class GroupsListActivity : AppCompatActivity() {
                         Log.e(TAG, postInIIIT.toString())
                         if (postInIIIT == "Admin") {
                             createGroupButton.visibility = Button.VISIBLE
+                            findViewById<TextView>(R.id.textview).visibility = TextView.GONE
                         } else {
                             createGroupButton.visibility = Button.GONE
+                            findViewById<TextView>(R.id.textview).visibility = TextView.VISIBLE
                         }
                     }
                 }
@@ -151,7 +151,6 @@ class GroupsListActivity : AppCompatActivity() {
                         for (document in snapshots.documents) {
                             val group = document.toObject(Group::class.java)
                             if (group != null) {
-                                // Fetch last message
                                 firestore.collection("groups").document(group.id)
                                     .collection("messages").orderBy("timestamp", Query.Direction.DESCENDING)
                                     .limit(1)
@@ -165,7 +164,6 @@ class GroupsListActivity : AppCompatActivity() {
                                             group.lastMessageTime = lastMessageDoc.getLong("timestamp") ?: 0L
                                         }
 
-                                        // Check if the current user has unread messages
                                         group.unreadMessages[currentUser.uid] = group.lastMessageTime > (document.getLong("lastReadTime_${currentUser.uid}") ?: 0L)
 
                                         if (group.members.contains(currentUser.uid)) {
@@ -196,11 +194,7 @@ class GroupsListActivity : AppCompatActivity() {
         if (yourGroupsList.contains(group)) {
             openGroupChat(group)
         } else {
-            requestToJoinGroup(group)
-            val intent = Intent(this, groupRoleManagementActivity::class.java)
-            intent.putExtra("selectedGroup", category)
-            intent.putExtra("selectedSubgroup", group.name)
-            startActivity(intent)
+            showRequestDialog(group)
         }
     }
 
@@ -235,7 +229,7 @@ class GroupsListActivity : AppCompatActivity() {
         val currentUser = auth.currentUser
         if (currentUser != null) {
             val userId = currentUser.uid
-            val userName = currentUser.displayName ?: "Unknown" // Assuming user has a display name
+            val userName = currentUser.displayName ?: "Unknown"
 
             val groupRequest = hashMapOf(
                 "userId" to userId,
@@ -248,7 +242,6 @@ class GroupsListActivity : AppCompatActivity() {
             firestore.collection("groupRequests")
                 .add(groupRequest)
                 .addOnSuccessListener {
-                    // Notify user that request has been sent
                     Toast.makeText(this, "Request sent to join ${group.name}", Toast.LENGTH_SHORT).show()
                 }
         }
