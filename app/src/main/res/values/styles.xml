@@ -42,4 +42,17 @@
     <style name="CustomSpinnerPrompt" parent="Theme.AppCompat.Light">
         <item name="android:textColorPrimary">@android:color/black</item>
         </style>
+
+
+    <style name="CustomDatePickerDialogTheme" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:datePickerDialogTheme">@style/CustomDatePickerDialog</item>
+    </style>
+
+    <style name="CustomDatePickerDialog" parent="ThemeOverlay.MaterialComponents.MaterialCalendar.Fullscreen">
+        <item name="android:buttonBarButtonStyle">@style/CustomButtonBarButton</item>
+    </style>
+
+    <style name="CustomButtonBarButton" parent="Widget.AppCompat.Button.ButtonBar.AlertDialog">
+        <item name="android:textColor">@android:color/white</item>
+      </style>
 </resources>

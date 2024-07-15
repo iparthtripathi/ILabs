@@ -1,4 +1,4 @@
-<!-- File: app/src/main/res/layout/timetable_item.xml -->
+<!-- File: app/src/main/res/layout/item_schedule.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
@@ -6,38 +6,24 @@
     android:padding="8dp">
 
     <TextView
-        android:id="@+id/courseName"
+        android:id="@+id/subjectTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Course Name"
+        android:text="Subject"
         android:textSize="16sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/startTime"
+        android:id="@+id/timeTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Start Time"
+        android:text="Time"
         android:textSize="14sp" />
 
     <TextView
-        android:id="@+id/endTime"
+        android:id="@+id/roomTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="End Time"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/dayOfWeek"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Day of Week"
-        android:textSize="14sp" />
-
-    <TextView
-        android:id="@+id/location"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Location"
+        android:text="Room"
         android:textSize="14sp" />
 </LinearLayout>

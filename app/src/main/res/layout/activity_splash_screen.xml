@@ -9,23 +9,15 @@
         android:gravity="center"
         android:layout_centerInParent="true">
 
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_centerInParent="true">
 
             <ImageView
                 android:id="@+id/logo1"
                 android:layout_width="@dimen/_150sdp"
                 android:layout_height="@dimen/_150sdp"
+                android:visibility="gone"
                 android:alpha="1"
                 android:src="@drawable/ilabslogo"/>
 
-            <Space
-                android:layout_width="@dimen/_5sdp"
-                android:layout_height="@dimen/_1sdp" />
 
             <ImageView
                 android:id="@+id/logo2"
@@ -34,10 +26,6 @@
                 android:alpha="1"
                 android:src="@drawable/collegelogo"/>
 
-            <Space
-                android:layout_width="match_parent"
-                android:layout_height="20dp" />
-        </LinearLayout>
         <TextView
             android:id="@+id/textView"
             android:layout_width="wrap_content"
@@ -46,6 +34,7 @@
             android:textSize="20sp"
             android:textColor="@android:color/black"
             android:textAlignment="center"
+            android:visibility="gone"
             android:alpha="1"
             android:fontFamily="@font/poppins_medium"/>
 

@@ -28,7 +28,6 @@ class Splash_screen : AppCompatActivity() {
 
         // Apply fade-in animation
         logo1.startAnimation(fadeIn)
-        logo2.startAnimation(fadeIn)
         textView.startAnimation(fadeIn)
 
         handler = Handler()
@@ -53,6 +52,6 @@ class Splash_screen : AppCompatActivity() {
                     finish()
                 }
             })
-        }, 3000)
+        }, 1500)
     }
 }

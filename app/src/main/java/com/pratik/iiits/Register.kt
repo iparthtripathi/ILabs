@@ -36,7 +36,7 @@ import com.pratik.iiits.Models.UserModel
 
 class Register : AppCompatActivity() {
 
-    var postlist = arrayOf("Admin","Council","Student")
+    var postlist = arrayOf("Student")
     var defaultimageuri: String = "https://bit.ly/3T5Uk5W"
     var defaultstatus = "Hey There I'm Using this Application"
     private lateinit var arrayAdapter: ArrayAdapter<String>
@@ -129,7 +129,7 @@ class Register : AppCompatActivity() {
     }
 
     fun open_login(view: View?) {
-        val intent = Intent(this, OtpVerifyActivity::class.java)
+        val intent = Intent(this, login_user::class.java)
         startActivity(intent)
         finish()
     }

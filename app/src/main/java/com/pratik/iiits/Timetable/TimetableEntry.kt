@@ -1,13 +1,16 @@
 package com.pratik.iiits.Timetable
 
 data class ClassSchedule(
+    val ug: String = "",
+    val branch: String = "",
+    val section: String = "",
     val subject: String = "",
+    val details: String = "",
     val time: String = "",
-    val room: String = "",
-    val dayOfWeek: String = ""
+    val date: String? = null,
+    val dayOfWeek: String? = null
 )
 
 data class DaySchedule(
-    val dayOfWeek: String = "",
-    val schedules: List<ClassSchedule> = emptyList()
+    val schedules: List<ClassSchedule> = listOf()
 )

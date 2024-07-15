@@ -38,7 +38,7 @@ class ScheduleAdapter(private val scheduleList: List<ClassSchedule>) :
         val currentSchedule = scheduleList[position]
         holder.subjectTextView.text = currentSchedule.subject
         holder.timeTextView.text = currentSchedule.time
-        holder.roomTextView.text = currentSchedule.room
+        holder.roomTextView.text = currentSchedule.details
 
         // Apply a background color from the predefined list, using the position modulo the list size to cycle through colors
         holder.itemView.setBackgroundColor(itemColors[position % itemColors.size])
