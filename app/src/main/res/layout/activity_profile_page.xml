@@ -136,7 +136,7 @@
                     android:layout_height="@dimen/_37sdp"
                     android:id="@+id/meassgeoredit"
                     android:background="@drawable/profile_btn"
-                    android:onClick="messageme"
+                    android:onClick="openROLE"
                     android:src="@drawable/ic_baseline_message_24"
                     android:contentDescription="Message" />
 

@@ -15,40 +15,79 @@ import com.pratik.iiits.R
 import java.text.SimpleDateFormat
 import java.util.*
 
-class MessagesAdapter(private val context: Context, private val messagesList: List<Message>) :
-    RecyclerView.Adapter<MessagesAdapter.ViewHolder>() {
+class MessagesAdapter(private val context: Context, private val messagesList: List<Message>,private var groupName: String ) :
+    RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     private val userMap = mutableMapOf<String, UserModel?>()
-    private val MESSAGE_TYPE_TEXT = 1
-    private val MESSAGE_TYPE_IMAGE = 2
+    private val VIEW_TYPE_HEADER = 0
+    private val VIEW_TYPE_TEXT = 1
+    private val VIEW_TYPE_IMAGE = 2
 
-    inner class TextMessageViewHolder(itemView: View) : ViewHolder(itemView) {
+    inner class TextMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val messageText: TextView = itemView.findViewById(R.id.message_text)
+        val userName: TextView = itemView.findViewById(R.id.userName)
+        val messageTime: TextView = itemView.findViewById(R.id.messageTime)
+        val senderImage: ImageView = itemView.findViewById(R.id.senderImage)
     }
 
-    inner class ImageMessageViewHolder(itemView: View) : ViewHolder(itemView) {
+    inner class ImageMessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val messageImage: ImageView = itemView.findViewById(R.id.message_image)
+        val userName: TextView = itemView.findViewById(R.id.userName)
+        val messageTime: TextView = itemView.findViewById(R.id.messageTime)
+        val senderImage: ImageView = itemView.findViewById(R.id.senderImage)
+    }
+
+    inner class HeaderViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val headerMessage: TextView = itemView.findViewById(R.id.header_message)
     }
 
     override fun getItemViewType(position: Int): Int {
-        return if (messagesList[position].imageUrl != null) {
-            MESSAGE_TYPE_IMAGE
-        } else {
-            MESSAGE_TYPE_TEXT
+        return when {
+            position == 0 -> VIEW_TYPE_HEADER
+            messagesList[position - 1].imageUrl != null -> VIEW_TYPE_IMAGE
+            else -> VIEW_TYPE_TEXT
+        }
+    }
+    fun setGroupName(name: String) {
+        groupName = name
+        notifyDataSetChanged()
+    }
+
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
+        return when (viewType) {
+            VIEW_TYPE_HEADER -> {
+                val view = LayoutInflater.from(context).inflate(R.layout.item_header_message, parent, false)
+                HeaderViewHolder(view)
+            }
+            VIEW_TYPE_TEXT -> {
+                val view = LayoutInflater.from(context).inflate(R.layout.item_text_message, parent, false)
+                TextMessageViewHolder(view)
+            }
+            VIEW_TYPE_IMAGE -> {
+                val view = LayoutInflater.from(context).inflate(R.layout.item_image_message, parent, false)
+                ImageMessageViewHolder(view)
+            }
+            else -> throw IllegalArgumentException("Invalid view type")
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-        val view = LayoutInflater.from(context).inflate(
-            if (viewType == MESSAGE_TYPE_TEXT) R.layout.item_text_message else R.layout.item_image_message,
-            parent, false
-        )
-        return if (viewType == MESSAGE_TYPE_TEXT) TextMessageViewHolder(view) else ImageMessageViewHolder(view)
+    override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
+        if (holder is HeaderViewHolder) {
+            val headerHolder = holder as HeaderViewHolder
+            headerHolder.headerMessage.text = "Welcome to $groupName !!!\nMessages are end-to-end encrypted. No one outside of this chat can read them."
+        } else {
+            val message = messagesList[position - 1] // Adjust for header
+
+            if (holder is TextMessageViewHolder) {
+                bindTextMessage(holder, message)
+            } else if (holder is ImageMessageViewHolder) {
+                bindImageMessage(holder, message)
+            }
+        }
     }
 
-    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val message = messagesList[position]
-
+    private fun bindTextMessage(holder: TextMessageViewHolder, message: Message) {
         // Check if user details are already fetched
         if (userMap.containsKey(message.senderId)) {
             val user = userMap[message.senderId]
@@ -58,22 +97,31 @@ class MessagesAdapter(private val context: Context, private val messagesList: Li
             fetchUserDetails(message.senderId, holder)
         }
 
-        if (holder is TextMessageViewHolder) {
-            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
-            val time = sdf.format(Date(message.timestamp))
-            holder.messageTime.text = time
-            holder.messageText.text = message.message
-        } else if (holder is ImageMessageViewHolder) {
-            val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
-            val time = sdf.format(Date(message.timestamp))
-            holder.messageTime.text = time
-            Glide.with(holder.messageImage.context)
-                .load(message.imageUrl)
-                .into(holder.messageImage)
-        }
+        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val time = sdf.format(Date(message.timestamp))
+        holder.messageTime.text = time
+        holder.messageText.text = message.message
     }
 
-    private fun fetchUserDetails(userId: String, holder: ViewHolder?) {
+    private fun bindImageMessage(holder: ImageMessageViewHolder, message: Message) {
+        // Check if user details are already fetched
+        if (userMap.containsKey(message.senderId)) {
+            val user = userMap[message.senderId]
+            holder.userName.text = user?.name ?: ""  // Use null-check operator
+            Glide.with(context).load(user?.imageUri ?: "").into(holder.senderImage)
+        } else {
+            fetchUserDetails(message.senderId, holder)
+        }
+
+        val sdf = SimpleDateFormat("hh:mm a", Locale.getDefault())
+        val time = sdf.format(Date(message.timestamp))
+        holder.messageTime.text = time
+        Glide.with(holder.messageImage.context)
+            .load(message.imageUrl)
+            .into(holder.messageImage)
+    }
+
+    private fun fetchUserDetails(userId: String, holder: RecyclerView.ViewHolder?) {
         val userReference = FirebaseDatabase.getInstance().reference.child("users").child(userId)
         userReference.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
@@ -91,12 +139,6 @@ class MessagesAdapter(private val context: Context, private val messagesList: Li
     }
 
     override fun getItemCount(): Int {
-        return messagesList.size
-    }
-
-    sealed class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val userName: TextView = itemView.findViewById(R.id.userName)  // Added userName here
-        val messageTime: TextView = itemView.findViewById(R.id.messageTime)
-        val senderImage: ImageView = itemView.findViewById(R.id.senderImage)
+        return messagesList.size + 1  // Adjust for header
     }
 }

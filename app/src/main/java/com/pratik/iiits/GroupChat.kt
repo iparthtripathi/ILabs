@@ -7,13 +7,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -25,7 +19,6 @@ import com.pratik.iiits.Adapters.UsersAdapter
 import com.pratik.iiits.Models.Group
 import com.pratik.iiits.Models.Message
 import com.pratik.iiits.Models.UserModel
-
 
 class GroupChat : AppCompatActivity() {
     private lateinit var messagesRecyclerView: RecyclerView
@@ -51,7 +44,7 @@ class GroupChat : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.group_chat)
 
-        groupNameTextView= findViewById(R.id.group_name_text_view)
+        groupNameTextView = findViewById(R.id.group_name_text_view)
         messagesRecyclerView = findViewById(R.id.messages_recycler_view)
         messageInput = findViewById(R.id.message_input)
         sendButton = findViewById(R.id.send_button)
@@ -61,11 +54,13 @@ class GroupChat : AppCompatActivity() {
         firestore = FirebaseFirestore.getInstance()
         storage = FirebaseStorage.getInstance()
         exitGroupButton = findViewById(R.id.exit_group_button)
-        progressBar = findViewById(R.id.progressBar);
+        progressBar = findViewById(R.id.progressBar)
 
         groupId = intent.getStringExtra("groupId")!!
 
-        messagesAdapter = MessagesAdapter(this,messagesList)
+        loadGroupDetails()
+
+        messagesAdapter = MessagesAdapter(this, messagesList, groupNameTextView.text.toString())
         messagesRecyclerView.layoutManager = LinearLayoutManager(this)
         messagesRecyclerView.adapter = messagesAdapter
 
@@ -93,7 +88,6 @@ class GroupChat : AppCompatActivity() {
             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
         }
 
-        loadGroupDetails()
         loadMessages()
     }
 
@@ -137,8 +131,6 @@ class GroupChat : AppCompatActivity() {
         }
     }
 
-
-
     private fun loadGroupDetails() {
         firestore.collection("groups").document(groupId)
             .get()
@@ -146,6 +138,7 @@ class GroupChat : AppCompatActivity() {
                 val group = document.toObject(Group::class.java)
                 if (group != null) {
                     groupNameTextView.text = group.name
+                    messagesAdapter.setGroupName(group.name)
                 }
             }
     }
@@ -213,9 +206,8 @@ class GroupChat : AppCompatActivity() {
                     Toast.makeText(this, "Failed to upload image", Toast.LENGTH_SHORT).show()
                 }
                 .addOnProgressListener {
-
                     val progress: Double =
-                        (100.0 * it.getBytesTransferred() / it.getTotalByteCount())
+                        (100.0 * it.bytesTransferred / it.totalByteCount)
                     progressBar!!.progress = progress.toInt()
                 }
         }
@@ -240,7 +232,7 @@ class GroupChat : AppCompatActivity() {
         firestore.collection("groups").document(groupId)
             .get()
             .addOnSuccessListener { document ->
-                val group = document.toObject(com.pratik.iiits.Models.Group::class.java)
+                val group = document.toObject(Group::class.java)
                 if (group != null) {
                     firestore.collection("users")
                         .whereIn("uid", group.members)

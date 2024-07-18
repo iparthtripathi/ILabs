@@ -228,6 +228,7 @@ class login_user : AppCompatActivity() {
 
     private fun login(account: GoogleSignInAccount?, user: FirebaseUser?) {
         startActivity(Intent(this@login_user, MainActivity::class.java))
+        finishAffinity()
     }
 
     fun configureright(){

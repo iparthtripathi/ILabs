@@ -1,13 +1,16 @@
 package com.pratik.iiits.Timetable
 
 import android.app.AlertDialog
+import android.content.ContentValues
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
+import android.widget.Button
 import android.widget.ImageButton
+import android.widget.Space
 import android.widget.Spinner
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
@@ -16,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.applandeo.materialcalendarview.CalendarView
 import com.applandeo.materialcalendarview.EventDay
 import com.applandeo.materialcalendarview.listeners.OnDayClickListener
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.CollectionReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.pratik.iiits.R
@@ -25,7 +29,7 @@ import java.util.*
 class ScheduleActivity : AppCompatActivity() {
 
 
-
+    lateinit var auth: FirebaseAuth
     private lateinit var firestore: FirebaseFirestore
     private lateinit var ugSpinner: Spinner
     private lateinit var branchSpinner: Spinner
@@ -55,6 +59,7 @@ class ScheduleActivity : AppCompatActivity() {
 
         loadUGPrograms()
         loadHolidays()
+        checkIfAdmin()
 
         findViewById<ImageButton>(R.id.addSchedule).setOnClickListener {
             val intent = Intent(this@ScheduleActivity, Adminentry::class.java)
@@ -135,6 +140,33 @@ class ScheduleActivity : AppCompatActivity() {
 
                 override fun onNothingSelected(parent: AdapterView<*>) {}
             }
+        }
+    }
+
+    private fun checkIfAdmin() {
+        auth = FirebaseAuth.getInstance()
+        val currentUser = auth.currentUser
+        if (currentUser != null) {
+            val userId = currentUser.uid
+            firestore.collection("users").document(userId).get()
+                .addOnSuccessListener { document ->
+                    if (document != null && document.exists()) {
+                        val postInIIIT = document.getString("postinIIIT")
+                        Log.e(ContentValues.TAG, postInIIIT.toString())
+                        if (postInIIIT == "Admin" || postInIIIT == "Council") {
+                            findViewById<ImageButton>(R.id.addHoliday).visibility=ImageButton.VISIBLE
+                            findViewById<ImageButton>(R.id.addSchedule).visibility=ImageButton.VISIBLE
+                        } else {
+                            findViewById<ImageButton>(R.id.addHoliday).visibility=ImageButton.GONE
+                            findViewById<ImageButton>(R.id.addSchedule).visibility=ImageButton.GONE
+                        }
+                    }
+                }
+                .addOnFailureListener { e ->
+                    Log.e(ContentValues.TAG, "Error fetching user details: $e")
+                    findViewById<ImageButton>(R.id.addHoliday).visibility=ImageButton.GONE
+                    findViewById<ImageButton>(R.id.addSchedule).visibility=ImageButton.GONE
+                }
         }
     }
 
@@ -237,7 +269,7 @@ class ScheduleActivity : AppCompatActivity() {
                 time = dateFormat.parse(dateString) ?: return@map null
             }
             Log.d("Holiday", "Highlighting holiday on: ${calendar.time}")
-            EventDay(calendar, R.drawable.ic_holiday) // Assuming you have an icon for holidays
+            EventDay(calendar, R.drawable.holiday) // Assuming you have an icon for holidays
         }.filterNotNull()
 
         calendarView.setEvents(holidayEvents)

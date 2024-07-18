@@ -82,6 +82,7 @@
             android:contentDescription="Add Schedule"
             android:src="@drawable/ic_add_schedule"
             android:padding="16dp"
+            android:visibility="gone"
             android:layout_marginEnd="8dp"/>
 
         <ImageButton
@@ -92,6 +93,7 @@
             android:contentDescription="Add Holiday"
             android:src="@drawable/ic_add_holiday"
             android:padding="16dp"
+            android:visibility="gone"
             android:layout_marginStart="8dp"/>
     </LinearLayout>
 </LinearLayout>

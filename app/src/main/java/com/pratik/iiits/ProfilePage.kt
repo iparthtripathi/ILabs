@@ -322,4 +322,8 @@ class ProfilePage : AppCompatActivity() {
         intent.putExtra("ReciverImage", uri)
 
     }
+
+    fun openROLE(view: View) {
+        startActivity(Intent(this@ProfilePage, SearchUsersActivity::class.java))
+    }
 }
